@@ -1,0 +1,54 @@
+# ============================
+# ✈️ Airline Reservation System (Django)
+# .gitignore file
+# ============================
+
+# Python cache and compiled files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Django database
+db.sqlite3
+
+# Virtual environment
+venv/
+env/
+ENV/
+
+# Local configuration
+*.env
+.env.*
+
+# Static and media files (collected or user-uploaded)
+staticfiles/
+media/
+
+# Migrations (optional to ignore compiled migrations)
+*.log
+
+# VSCode and IDE configs
+.vscode/
+.idea/
+
+# System files
+.DS_Store
+Thumbs.db
+
+# Backup and temporary files
+*.bak
+*.swp
+*.tmp
+~$*
+
+# Pytest / Coverage / Reports
+.coverage
+htmlcov/
+pytest_cache/
+*.mo
+*.pot
+
+# Build / Distribution
+build/
+dist/
+*.egg-info/
