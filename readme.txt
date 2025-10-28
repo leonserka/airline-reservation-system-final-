@@ -1,52 +1,62 @@
-# ✈️ Airline Reservation System (Django)
+✈️ Airline Reservation System (Django)
 
-Airline Reservation System je web aplikacija izrađena u **Django frameworku** koja omogućuje korisnicima pretragu, rezervaciju i otkazivanje avionskih karata.  
-Administrator može dodavati nove letove, dok korisnici mogu pregledavati i upravljati vlastitim rezervacijama.
+Airline Reservation System is a web application built with the Django framework that allows users to search, book, and cancel flight tickets.
+Administrators can manage flights through the Django admin panel, while users can view and manage their personal bookings.
 
----
+🚀 Features
+👤 Users
 
-## 🚀 Funkcionalnosti
+User registration and login
 
-### 👤 Korisnici
-- Registracija i prijava korisnika  
-- Pretraga dostupnih letova po polaznom i dolaznom gradu te datumu  
-- Višestupanjski proces rezervacije:
-  1. Unos osobnih podataka  
-  2. Odabir klase sjedala (Basic, Plus, Premium)  
-  3. Odabir sjedala na mapi aviona  
-  4. Pregled i potvrda rezervacije  
-- Pregled svih svojih kupljenih karata (Check Booked Flights)  
-- Pregled detalja pojedine karte (About Ticket)  
-- Otkazivanje karte (Cancel Ticket) – dostupno samo za **PLUS** klasu  
-- Kada se karta otkaže, sjedalo se automatski oslobađa i postaje ponovno dostupno  
+Search for available flights by origin, destination, and date
 
-### 🧑‍💼 Administrator
-- Dodavanje, uređivanje i brisanje letova kroz **Django admin panel**  
-- Pregled svih kupljenih karata i statusa plaćanja  
+Multi-step booking process:
 
----
+Enter personal information
 
-## 🗄️ Modeli
+Choose seat class (Basic, Plus, Premium)
 
-### `Flight`
-Informacije o letu:
-- Broj leta, polazni i dolazni grad  
-- Datum, vrijeme i cijena  
+Select a seat on the airplane map
 
-### `Ticket`
-Informacije o rezervaciji:
-- Putnik (ime, prezime, OIB, email, telefon, država)  
-- Let (ForeignKey → Flight)  
-- Klasa sjedala i broj sjedala  
-- Način plaćanja  
-- **Payment Status:** `Paid` / `Refunded`  
-- **Status:** `Booked` / `Canceled`  
+Review and confirm the booking
 
----
+View all purchased tickets (Check Booked Flights)
 
-## ⚙️ Pokretanje projekta lokalno
+View ticket details (About Ticket)
 
-### 1️⃣ Kloniraj repozitorij
-```bash
-git clone https://github.com/korisnicko_ime/airline_reservation_django.git
-cd airline_reservation_django
+Cancel a ticket (Cancel Ticket) – available only for PLUS class
+
+When a ticket is canceled, the seat automatically becomes available again
+
+🧑‍💼 Administrator
+
+Add, edit, and delete flights via Django Admin Panel
+
+View all booked tickets and payment statuses
+
+🗄️ Models
+Flight
+
+Contains flight details:
+
+Flight number
+
+Departure city & destination city
+
+Date, time, and price
+
+Ticket
+
+Contains booking details:
+
+Passenger info (name, surname, OIB, email, phone, country)
+
+Related flight (ForeignKey → Flight)
+
+Seat class and seat number
+
+Payment method
+
+Payment Status: Paid / Refunded
+
+Status: Booked / Canceled
