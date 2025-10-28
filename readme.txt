@@ -1,55 +1,62 @@
-# ✈️ Airline Reservation System (Django)
+<h1 align="center">✈️ Airline Reservation System (Django)</h1>
 
-**Airline Reservation System** is a web application built with the **Django framework** that allows users to search, book, and cancel flight tickets.  
-Administrators can manage flights through the Django admin panel, while users can view and manage their own bookings.
+<p align="center">
+  <b>Airline Reservation System</b> is a web application built with the <b>Django framework</b> that allows users to search, book, and cancel flight tickets.<br>
+  Administrators can manage flights through the Django admin panel, while users can view and manage their own bookings.
+</p>
 
----
+<hr>
 
-## 🚀 Features
+<h2>🚀 Features</h2>
 
-### 👤 Users
-- User registration and login  
-- Search for available flights by origin, destination, and date  
-- Multi-step booking process:
-  1. Enter personal information  
-  2. Choose seat class (**Basic**, **Plus**, **Premium**)  
-  3. Select a seat on the airplane map  
-  4. Review and confirm the booking  
-- View all purchased tickets (**Check Booked Flights**)  
-- View details of each ticket (**About Ticket**)  
-- Cancel a ticket (**Cancel Ticket**) – available only for **PLUS** class  
-- When a ticket is canceled, the seat automatically becomes available again  
+<h3>👤 Users</h3>
+<ul>
+  <li>User registration and login</li>
+  <li>Search for available flights by origin, destination, and date</li>
+  <li>Multi-step booking process:</li>
+  <ol>
+    <li>Enter personal information</li>
+    <li>Choose seat class (<b>Basic</b>, <b>Plus</b>, <b>Premium</b>)</li>
+    <li>Select a seat on the airplane map</li>
+    <li>Review and confirm the booking</li>
+  </ol>
+  <li>View all purchased tickets (<b>Check Booked Flights</b>)</li>
+  <li>View details of each ticket (<b>About Ticket</b>)</li>
+  <li>Cancel a ticket (<b>Cancel Ticket</b>) – available only for <b>PLUS</b> class</li>
+  <li>When a ticket is canceled, the seat automatically becomes available again</li>
+</ul>
 
----
+<h3>🧑‍💼 Administrator</h3>
+<ul>
+  <li>Add, edit, and delete flights through the <b>Django Admin Panel</b></li>
+  <li>View all booked tickets and their payment status</li>
+</ul>
 
-### 🧑‍💼 Administrator
-- Add, edit, and delete flights through the **Django Admin Panel**  
-- View all booked tickets and their payment status  
+<hr>
 
----
+<h2>🗄️ Models</h2>
 
-## 🗄️ Models
+<h3>✈️ Flight</h3>
+Contains flight details:<br>
+• Flight number<br>
+• Departure and destination cities<br>
+• Date, time, and price<br><br>
 
-### ✈️ `Flight`
-Contains flight details:
-- Flight number  
-- Departure and destination cities  
-- Date, time, and price  
+<h3>🎫 Ticket</h3>
+Contains booking details:<br>
+• Passenger information (name, surname, OIB, email, phone, country)<br>
+• Linked flight (<b>ForeignKey → Flight</b>)<br>
+• Seat class and seat number<br>
+• Payment method<br>
+• <b>Payment Status:</b> Paid / Refunded<br>
+• <b>Status:</b> Booked / Canceled<br>
 
-### 🎫 `Ticket`
-Contains booking details:
-- Passenger information (name, surname, OIB, email, phone, country)  
-- Linked flight (**ForeignKey → Flight**)  
-- Seat class and seat number  
-- Payment method  
-- **Payment Status:** `Paid` / `Refunded`  
-- **Status:** `Booked` / `Canceled`  
+<hr>
 
----
+<h2>⚙️ Run the Project Locally</h2>
 
-## ⚙️ Run the Project Locally
+<b>1️⃣ Clone the Repository</b><br>
 
-### 1️⃣ Clone the Repository
 ```bash
 git clone https://github.com/<your_username>/airline_reservation_django.git
 cd airline_reservation_django
