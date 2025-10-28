@@ -3,120 +3,130 @@
 The **Airline Reservation System** is a web application built with the Django framework that enables users to search, book, and cancel flight tickets.  
 Administrators can manage flights and view all reservations through the Django Admin Panel.
 
-------------------------------------------------------------
-🚀 MAIN FEATURES
-------------------------------------------------------------
+---
 
-👤 USERS:
-1. **User Registration & Login**  
-   - Secure authentication system for user accounts.
-<hr>
+## 🚀 Main Features
 
-2. **Flight Search**  
-   - Search available flights by origin, destination, and date.
-<hr>
+### 👤 Users
+- User registration and login  
+- Search for available flights by origin, destination, and date  
+- Multi-step booking process:
+  1. Enter personal information  
+  2. Choose seat class (**Basic**, **Plus**, **Premium**)  
+  3. Select a seat on the airplane map  
+  4. Review and confirm the booking  
+- View all purchased tickets (**Check Booked Flights**)  
+- View details of each ticket (**About Ticket**)  
+- Cancel a ticket (**Cancel Ticket**) – available only for **PLUS** class  
+- When a ticket is canceled, the seat automatically becomes available again  
 
-3. **Multi-step Booking Process**  
-   - Step 1: Enter personal information  
-   - Step 2: Choose seat class (**Basic**, **Plus**, **Premium**)  
-   - Step 3: Select a seat on the airplane map  
-   - Step 4: Review and confirm the booking
-<hr>
+### 🧑‍💼 Administrator
+- Add, edit, and delete flights through the **Django Admin Panel**  
+- View all booked tickets and their payment status  
 
-4. **View Purchased Tickets**  
-   - Check all booked flights in one place.
-<hr>
+---
 
-5. **Ticket Details (About Ticket)**  
-   - View complete information for each ticket.
-<hr>
+## 🗄️ Models
 
-6. **Cancel Ticket (Plus Class Only)**  
-   - Available only for PLUS class passengers.  
-   - When a ticket is canceled, the seat automatically becomes available again.
-<hr>
-
-🧑‍💼 ADMINISTRATOR:
-7. **Admin Panel Management**  
-   - Add, edit, or delete flights through the Django Admin Panel.
-<hr>
-
-8. **View Reservations and Payment Status**  
-   - Track all booked tickets and their current payment states.
-<hr>
-
-------------------------------------------------------------
-🗄️ MODELS
-------------------------------------------------------------
-
-✈️ **FLIGHT MODEL**
+### ✈️ Flight
+Contains flight details:
 - Flight number  
 - Departure and destination cities  
 - Date and time of departure  
-- Flight price
-<hr>
+- Flight price  
 
-🎫 **TICKET MODEL**
-- Passenger information (first name, last name, OIB, email, phone, country)  
+### 🎫 Ticket
+Contains ticket and passenger details:
+- Passenger info (name, surname, OIB, email, phone, country)  
 - Linked flight (**ForeignKey → Flight**)  
 - Seat class and seat number  
 - Payment method  
-- **Payment status:** Paid / Refunded  
-- **Ticket status:** Booked / Canceled
-<hr>
+- **Payment Status:** Paid / Refunded  
+- **Ticket Status:** Booked / Canceled  
 
-------------------------------------------------------------
-⚙️ HOW TO RUN LOCALLY
-------------------------------------------------------------
+---
 
-1️⃣ Clone the repository:
+## ⚙️ How to Run Locally
+
+1️⃣ **Clone the repository**
+```bash
 git clone https://github.com/leonserka/airline-reservation-system-final-.git
 cd airline_reservation_django
+```
 
-2️⃣ Install the dependencies:
+2️⃣ **Install dependencies**
+```bash
 pip install -r requirements.txt
+```
 
-3️⃣ Run database migrations:
+3️⃣ **Apply database migrations**
+```bash
 python manage.py migrate
+```
 
-4️⃣ Start the development server:
+4️⃣ **Start the development server**
+```bash
 python manage.py runserver
+```
 
-5️⃣ Open in your browser:
+5️⃣ **Open in browser**
+```
 http://127.0.0.1:8000/
-<hr>
+```
 
-------------------------------------------------------------
-👩‍💻 ADMIN PANEL
-------------------------------------------------------------
+---
 
-Access the admin panel:
+## 👩‍💻 Admin Panel
+
+Access the Django Admin interface:
+```
 http://127.0.0.1:8000/admin/
+```
 
-Create an admin user:
+Create a superuser:
+```bash
 python manage.py createsuperuser
-<hr>
+```
 
-------------------------------------------------------------
-📦 TECHNOLOGIES USED
-------------------------------------------------------------
+---
+
+## 🗂️ Project Structure
+```
+airline_reservation_django/
+├── airline_project/
+│   ├── settings.py
+│   ├── urls.py
+│   └── wsgi.py
+├── flights/
+│   ├── models.py
+│   ├── views.py
+│   ├── urls.py
+│   ├── forms.py
+│   ├── static/
+│   └── templates/
+└── manage.py
+```
+
+---
+
+## 📦 Technologies Used
 - Python (Django Framework)  
 - SQLite / PostgreSQL database  
 - HTML, CSS, JavaScript  
 - Bootstrap (for frontend styling)
-<hr>
 
-------------------------------------------------------------
-📄 LICENSE
-------------------------------------------------------------
+---
 
+## 🚧 Future Improvements
+More information coming soon — still deciding what to add next.
+
+---
+
+## 📄 License
 This project is open-source and free to use, modify, and distribute — attribution is appreciated.
-<hr>
 
-------------------------------------------------------------
-✍️ AUTHOR
-------------------------------------------------------------
+---
 
-Author: **Leon Serka**  
-GitHub: https://github.com/leonserka
-<hr>
+## ✍️ Author
+**Leon Serka**  
+[https://github.com/leonserka](https://github.com/leonserka)
