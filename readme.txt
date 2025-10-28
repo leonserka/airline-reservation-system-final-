@@ -1,96 +1,122 @@
 # ✈️ Airline Reservation System (Django)
 
-Airline Reservation System je web aplikacija izrađena pomoću Django frameworka koja omogućuje korisnicima pretraživanje, rezervaciju i otkazivanje avionskih karata.  
-Administrator putem Django Admin panela može upravljati letovima i pregledavati sve rezervacije.
+The **Airline Reservation System** is a web application built with the Django framework that enables users to search, book, and cancel flight tickets.  
+Administrators can manage flights and view all reservations through the Django Admin Panel.
 
 ------------------------------------------------------------
-🚀 GLAVNE ZNAČAJKE
+🚀 MAIN FEATURES
 ------------------------------------------------------------
 
-👤 KORISNICI:
-- Registracija i prijava korisnika
-- Pretraživanje dostupnih letova prema polazištu, odredištu i datumu
-- Višekorakni proces rezervacije:
-  1. Unos osobnih podataka
-  2. Odabir klase sjedala (BASIC, PLUS, PREMIUM)
-  3. Odabir sjedala na karti zrakoplova
-  4. Pregled i potvrda rezervacije
-- Pregled svih kupljenih karata (Check Booked Flights)
-- Detaljan prikaz svake karte (About Ticket)
-- Otkazivanje karte (Cancel Ticket) – dostupno samo za PLUS klasu
-- Nakon otkazivanja karte, sjedalo postaje ponovno dostupno
+👤 USERS:
+1. **User Registration & Login**  
+   - Secure authentication system for user accounts.
+<hr>
+
+2. **Flight Search**  
+   - Search available flights by origin, destination, and date.
+<hr>
+
+3. **Multi-step Booking Process**  
+   - Step 1: Enter personal information  
+   - Step 2: Choose seat class (**Basic**, **Plus**, **Premium**)  
+   - Step 3: Select a seat on the airplane map  
+   - Step 4: Review and confirm the booking
+<hr>
+
+4. **View Purchased Tickets**  
+   - Check all booked flights in one place.
+<hr>
+
+5. **Ticket Details (About Ticket)**  
+   - View complete information for each ticket.
+<hr>
+
+6. **Cancel Ticket (Plus Class Only)**  
+   - Available only for PLUS class passengers.  
+   - When a ticket is canceled, the seat automatically becomes available again.
+<hr>
 
 🧑‍💼 ADMINISTRATOR:
-- Dodavanje, uređivanje i brisanje letova putem Django Admin panela
-- Pregled svih rezervacija i statusa plaćanja
+7. **Admin Panel Management**  
+   - Add, edit, or delete flights through the Django Admin Panel.
+<hr>
+
+8. **View Reservations and Payment Status**  
+   - Track all booked tickets and their current payment states.
+<hr>
 
 ------------------------------------------------------------
-🗄️ MODELI
+🗄️ MODELS
 ------------------------------------------------------------
 
-✈️ FLIGHT:
-- Broj leta
-- Grad polaska i odredišta
-- Datum i vrijeme polaska
-- Cijena leta
+✈️ **FLIGHT MODEL**
+- Flight number  
+- Departure and destination cities  
+- Date and time of departure  
+- Flight price
+<hr>
 
-🎫 TICKET:
-- Podaci o putniku (ime, prezime, OIB, email, telefon, država)
-- Povezan let (ForeignKey → Flight)
-- Klasa sjedala i broj sjedala
-- Način plaćanja
-- Status plaćanja: Paid / Refunded
-- Status karte: Booked / Canceled
+🎫 **TICKET MODEL**
+- Passenger information (first name, last name, OIB, email, phone, country)  
+- Linked flight (**ForeignKey → Flight**)  
+- Seat class and seat number  
+- Payment method  
+- **Payment status:** Paid / Refunded  
+- **Ticket status:** Booked / Canceled
+<hr>
 
 ------------------------------------------------------------
-⚙️ POKRETANJE PROJEKTA LOKALNO
+⚙️ HOW TO RUN LOCALLY
 ------------------------------------------------------------
 
-1️⃣ Kloniraj repozitorij:
-    git clone https://github.com/<your_username>/airline_reservation_django.git
-    cd airline_reservation_django
+1️⃣ Clone the repository:
+git clone https://github.com/leonserka/airline-reservation-system-final-.git
+cd airline_reservation_django
 
-2️⃣ Instaliraj potrebne pakete:
-    pip install -r requirements.txt
+2️⃣ Install the dependencies:
+pip install -r requirements.txt
 
-3️⃣ Pokreni migracije baze:
-    python manage.py migrate
+3️⃣ Run database migrations:
+python manage.py migrate
 
-4️⃣ Pokreni razvojni server:
-    python manage.py runserver
+4️⃣ Start the development server:
+python manage.py runserver
 
-5️⃣ Otvori u pregledniku:
-    http://127.0.0.1:8000/
+5️⃣ Open in your browser:
+http://127.0.0.1:8000/
+<hr>
 
 ------------------------------------------------------------
 👩‍💻 ADMIN PANEL
 ------------------------------------------------------------
 
-Pristup admin panelu:
-    http://127.0.0.1:8000/admin/
+Access the admin panel:
+http://127.0.0.1:8000/admin/
 
-Za kreiranje admin korisnika:
-    python manage.py createsuperuser
-
-------------------------------------------------------------
-📦 TEHNOLOGIJE
-------------------------------------------------------------
-- Python (Django Framework)
-- SQLite / PostgreSQL baza podataka
-- HTML, CSS, JavaScript
-- Bootstrap (za frontend stilizaciju)
+Create an admin user:
+python manage.py createsuperuser
+<hr>
 
 ------------------------------------------------------------
-📄 LICENCA
+📦 TECHNOLOGIES USED
 ------------------------------------------------------------
-
-Ovaj projekt je otvorenog koda i može se slobodno koristiti, mijenjati i dijeliti uz navođenje autora.
-
-------------------------------------------------------------
-✍️ AUTOR
-------------------------------------------------------------
-
-Ime autora: <Tvoje ime>  
-GitHub profil: https://github.com/<your_username>
+- Python (Django Framework)  
+- SQLite / PostgreSQL database  
+- HTML, CSS, JavaScript  
+- Bootstrap (for frontend styling)
+<hr>
 
 ------------------------------------------------------------
+📄 LICENSE
+------------------------------------------------------------
+
+This project is open-source and free to use, modify, and distribute — attribution is appreciated.
+<hr>
+
+------------------------------------------------------------
+✍️ AUTHOR
+------------------------------------------------------------
+
+Author: **Leon Serka**  
+GitHub: https://github.com/leonserka
+<hr>
