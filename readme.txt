@@ -1,7 +1,7 @@
 # ✈️ Airline Reservation System (Django)
 
 **Airline Reservation System** is a web application built with the **Django framework** that allows users to search, book, and cancel flight tickets.  
-Administrators can manage flights through the Django admin panel, while users can view and manage their own bookings.  
+Administrators can manage flights through the Django admin panel, while users can view and manage their own bookings.
 
 ---
 
@@ -10,7 +10,7 @@ Administrators can manage flights through the Django admin panel, while users ca
 ### 👤 Users
 - User registration and login  
 - Search for available flights by origin, destination, and date  
-- Multi-step booking process:  
+- Multi-step booking process:
   1. Enter personal information  
   2. Choose seat class (**Basic**, **Plus**, **Premium**)  
   3. Select a seat on the airplane map  
