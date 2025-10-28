@@ -157,7 +157,6 @@ airline_reservation_django/
 ├── requirements.txt               # Project dependencies
 ├── README.md                      # Project documentation
 └── .gitignore                     # Git ignore rules
-
 ```
 
 ---
@@ -167,6 +166,26 @@ airline_reservation_django/
 - SQLite / PostgreSQL database  
 - HTML, CSS, JavaScript  
 - Bootstrap (for frontend styling)
+
+---
+
+## 🗄️ Database Technology
+
+This project uses **SQLite** as the default database engine provided by Django.  
+SQLite is lightweight, file-based, and perfect for local development and testing.
+
+For production environments, the project can easily be configured to use **PostgreSQL**,  
+a more robust and scalable relational database system.
+
+**Default configuration (development):**
+- Database: `SQLite`
+- File: `db.sqlite3`
+- No additional setup required
+
+**Optional configuration (production):**
+- Database: `PostgreSQL`
+- Driver: `psycopg2`
+- Suitable for deployment on platforms such as Render, Railway, or AWS
 
 ---
 
