@@ -209,7 +209,7 @@ a more robust and scalable relational database system.
 
 | Date       | Version | Highlights |
 |------------|----------|-------------|
-| **2025-10-30** | v1.0 | Base booking flow, flight search, login/register, ticket issue & cancel (**PLUS only**), seat map, admin CRUD for flights. |
+| **2025-10-25** | v1.0 | Base booking flow, flight search, login/register, ticket issue & cancel (**PLUS only**), seat map, admin CRUD for flights. |
 | **2025-10-31** | v1.1 | Multi-passenger booking & seat selection; hide past flights (`date >= today`); new Step 4 (**Extras: luggage/equipment**) and Step 5 (**Payment**); total price includes extras × passengers; `Ticket.purchased_by` for per-user bookings list; **About Ticket** shows extras & PDF with Code128 barcode; session scoping for seats per flight; bugfixes & cleanup. |
 
 
