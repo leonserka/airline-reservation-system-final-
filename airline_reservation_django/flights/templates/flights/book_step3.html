@@ -1,0 +1,74 @@
+{% extends 'flights/base.html' %}
+{% load static %}
+
+{% block content %}
+  <h1>Step 3: Select Your Seats</h1>
+  <p>Flight: {{ flight.departure_city }} → {{ flight.arrival_city }} | {{ flight.date }}</p>
+  <p>Selected Class: {{ request.session.seat_class }}</p>
+  <p>Total Price: {{ total_price }} €</p>
+
+  <p>You need to select {{ num_passengers }} seat{{ num_passengers|pluralize:"s" }}.</p>
+  <p>Selected: {{ selected_seats|length }} / {{ num_passengers }}</p>
+
+  <form method="post">
+    {% csrf_token %}
+    <div class="seat-map-container">
+        {% for row in seat_positions %}
+            <div class="row">
+                <div class="left-side">
+                    {% for seat in row.left %}
+                        <div 
+                            class="seat 
+                                {% if seat.occupied %}occupied{% elif seat.seat_id|stringformat:"s" in selected_seats %}selected{% endif %}" 
+                            id="seat-{{ seat.seat_id }}" 
+                            style="top: {{ seat.top }}px; left: {{ seat.left }}px;"
+                            data-seat="{{ seat.seat_id }}"
+                            onclick="selectSeat('{{ seat.seat_id }}')">
+                            {{ seat.seat_id }}
+                        </div>
+                    {% endfor %}
+                </div>
+
+                <div class="right-side">
+                    {% for seat in row.right %}
+                        <div 
+                            class="seat 
+                                {% if seat.occupied %}occupied{% elif seat.seat_id|stringformat:"s" in selected_seats %}selected{% endif %}" 
+                            id="seat-{{ seat.seat_id }}" 
+                            style="top: {{ seat.top }}px; left: {{ seat.left }}px;"
+                            data-seat="{{ seat.seat_id }}"
+                            onclick="selectSeat('{{ seat.seat_id }}')">
+                            {{ seat.seat_id }}
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+
+    <input type="hidden" name="selected_seat" id="selected_seat_input">
+    
+    {% if selected_seats|length >= num_passengers %}
+      <button type="submit" formaction="{% url 'book_step4' flight.id %}" class="continue-btn">
+        Continue to Payment
+      </button>
+    {% endif %}
+  </form>
+
+  <link rel="stylesheet" href="{% static 'flights/flight_step3.css' %}">
+  <script>
+    function selectSeat(seatId) {
+        const seatDiv = document.getElementById('seat-' + seatId);
+        if (seatDiv.classList.contains('occupied')) return;
+
+        if (seatDiv.classList.contains('selected')) {
+            seatDiv.classList.remove('selected');
+            removeSeatFromSession(seatId);
+        } else {
+            seatDiv.classList.add('selected');
+            document.getElementById('selected_seat_input').value = seatId;
+            document.forms[0].submit();
+        }
+    }
+  </script>
+{% endblock %}

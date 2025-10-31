@@ -1,0 +1,34 @@
+{% extends 'flights/base.html' %}
+{% block content %}
+
+<h1>Booking Successful!</h1>
+<p>Thank you for your purchase.</p>
+
+{% if tickets %}
+    <h2>Passenger Tickets</h2>
+    <table border="1" cellpadding="5" cellspacing="0">
+        <tr>
+            <th>Passenger</th>
+            <th>Flight</th>
+            <th>Seat</th>
+            <th>Class</th>
+            <th>Price (€)</th>
+            <th>Status</th>
+        </tr>
+        {% for ticket in tickets %}
+        <tr>
+            <td>{{ ticket.passenger_name }} {{ ticket.passenger_surname }}</td>
+            <td>{{ ticket.flight.departure_city }} → {{ ticket.flight.arrival_city }} ({{ ticket.flight.date }})</td>
+            <td>{{ ticket.seat_number }}</td>
+            <td>{{ ticket.seat_class }}</td>
+            <td>{{ ticket.price_paid }}</td>
+            <td>{{ ticket.payment_status|capfirst }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+{% else %}
+    <p>No tickets found.</p>
+{% endif %}
+
+<a href="{% url 'home' %}" class="btn btn-primary">Return Home</a>
+{% endblock %}

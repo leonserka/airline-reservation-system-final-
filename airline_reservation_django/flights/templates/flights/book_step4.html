@@ -1,0 +1,30 @@
+{% extends 'flights/base.html' %}
+{% load static %}
+
+{% block content %}
+<h1>Step 4: Do you need extra luggage or equipment?</h1>
+<p>Flight: {{ flight.departure_city }} → {{ flight.arrival_city }} | {{ flight.date }}</p>
+<p>Base price: {{ total_price }} €</p>
+
+<form method="post">
+    {% csrf_token %}
+
+    <h3>🧳 Extra Luggage</h3>
+    <label><input type="radio" name="luggage_option" value="10kg"> 10 kg checked-in bag (+20 €)</label><br>
+    <label><input type="radio" name="luggage_option" value="20kg"> 20 kg checked-in bag (+30 €)</label><br>
+    <label><input type="radio" name="luggage_option" value="23kg"> 23 kg checked-in bag (+40 €)</label><br>
+    <label><input type="radio" name="luggage_option" value="" checked> No extra luggage</label>
+
+    <hr>
+
+    <h3>🎸 Need to take any equipment?</h3>
+    <label><input type="radio" name="equipment_option" value="sports"> Sports equipment (bike, golf, ski...) (+40 €)</label><br>
+    <label><input type="radio" name="equipment_option" value="music"> Music equipment (+50 €)</label><br>
+    <label><input type="radio" name="equipment_option" value="baby"> Baby equipment (+10 €)</label><br>
+    <label><input type="radio" name="equipment_option" value="" checked> No equipment</label>
+
+    <hr>
+
+    <button type="submit" class="continue-btn">Continue to Payment</button>
+</form>
+{% endblock %}

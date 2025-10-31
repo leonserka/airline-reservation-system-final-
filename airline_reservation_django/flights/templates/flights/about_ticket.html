@@ -1,0 +1,25 @@
+{% extends 'flights/base.html' %}
+{% block content %}
+<h1>Ticket Details</h1>
+
+<div class="ticket-info">
+  <p><strong>Passenger:</strong> {{ ticket.passenger_name }} {{ ticket.passenger_surname }}</p>
+  <p><strong>Flight:</strong> {{ ticket.flight.departure_city }} → {{ ticket.flight.arrival_city }}</p>
+  <p><strong>Date:</strong> {{ ticket.flight.date }}</p>
+  <p><strong>Seat:</strong> {{ ticket.seat_number|default:"N/A" }} ({{ ticket.seat_class }})</p>
+  <p><strong>Price Paid:</strong> €{{ ticket.price_paid }}</p>
+  <p><strong>Extra Luggage:</strong> {{ ticket.extra_luggage|default:"None" }}</p>
+  <p><strong>Equipment:</strong> {{ ticket.extra_equipment|default:"None" }}</p>
+  <p><strong>Payment Status:</strong> {{ ticket.payment_status|capfirst }}</p>
+  <p><strong>Booking Status:</strong> {{ ticket.status|capfirst }}</p>
+</div>
+
+<div class="actions">
+  {% if can_cancel and ticket.status != 'canceled' %}
+    <a href="{% url 'cancel_booked_flight' ticket.id %}" class="btn btn-danger">Cancel Ticket</a>
+  {% endif %}
+
+  <a href="?download=pdf" class="btn btn-primary">Download Ticket (PDF)</a>
+  <a href="{% url 'check_booked_flights' %}" class="btn btn-secondary">Back</a>
+</div>
+{% endblock %}

@@ -1,0 +1,26 @@
+{% extends 'flights/base.html' %}
+{% load static %}
+
+{% block content %}
+<h1>Step 1: Passenger Details</h1>
+<p>Flight: {{ flight.departure_city }} → {{ flight.arrival_city }} | {{ flight.date }}</p>
+
+<form method="post">
+    {% csrf_token %}
+    
+    <label for="num_passengers">Number of passengers:</label>
+    <input type="number" name="num_passengers" id="num_passengers" value="{{ num_passengers }}" min="1" max="9" required>
+    <hr>
+
+    {% for form in passenger_forms %}
+        <fieldset style="margin-bottom: 20px; border: 1px solid #ccc; padding: 10px;">
+            <legend>Passenger {{ forloop.counter }}</legend>
+            {{ form.as_p }}
+        </fieldset>
+    {% endfor %}
+
+    <button type="submit">Next</button>
+</form>
+
+<script src="{% static 'flights/flight_step1.js' %}"></script>
+{% endblock %}
