@@ -67,4 +67,3 @@ class Ticket(models.Model):
     def __str__(self):
         return f"{self.passenger_name} {self.passenger_surname} | {self.flight.flight_number}"
 
-
