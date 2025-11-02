@@ -40,6 +40,7 @@ uploads/
 *.tmp
 *.pid
 ~$*
+*.tar
 
 # --- IDE and editor settings ---
 .vscode/
@@ -76,3 +77,19 @@ __pypackages__/
 *.lock
 *.cache/
 *.log.*
+
+# --- Docker files ---
+docker-compose.override.yml
+*.pid
+*.sock
+*.tar
+*.bak
+
+# --- Flyway ---
+flyway/sql/*.tmp
+flyway/drivers/
+flyway/conf/
+
+# --- PyInstaller / compiled executables ---
+*.spec
+output/

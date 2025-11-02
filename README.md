@@ -1,7 +1,6 @@
 # ✈️ Airline Reservation System (Django)
 
-The **Airline Reservation System** is a web application built with the Django framework that enables users to search, book, and cancel flight tickets.  
-Administrators can manage flights and view all reservations through the Django Admin Panel.
+The **Airline Reservation System** is a full-stack web application built with the Django framework and PostgreSQL(via Docker and Flyway migrations).It allows users to search, book, and cancel flight tickets, while administrators can manage flights and monitor all reservations through the Django Admin Panel.
 
 ---
 
@@ -14,16 +13,17 @@ Administrators can manage flights and view all reservations through the Django A
   1. Enter personal information  
   2. Choose seat class (**Basic**, **Regular**, **Plus**)  
   3. Select a seat on the airplane map (supports multiple passengers)
-  4. (Optional) Add extras: Extra Luggage (10/20/23 kg) & Equipmen (Sports/Music/Baby)
+  4. (Optional) Add extras: Extra Luggage (10/20/23 kg) & Equipment (Sports/Music/Baby)
   5. Payment & ticket issuing
 - View all purchased tickets (**Check Booked Flights**) — shows tickets bought by the logged-in user (even for other passengers)
-- View details of each ticket (**About Ticket**) — includes extras and PDF ticket with Code128 barcode  
+- View ticket details (**About Ticket**) — includes extras and PDF ticket with Code128 barcode  
 - Cancel a ticket (**Cancel Ticket**) – available only for **PLUS** class  
 - When a ticket is canceled, the seat automatically becomes available again  
 
 ### 🧑‍💼 Administrator
 - Add, edit, and delete flights through the **Django Admin Panel**  
-- View all booked tickets and their payment status  
+- View all booked tickets and their payment status
+- Automatically sync database schema via Flyway migrations 
 
 ---
 
@@ -32,13 +32,15 @@ Administrators can manage flights and view all reservations through the Django A
 ### ✈️ Flight
 Contains flight details:
 - Flight number  
-- Departure and destination cities  
+- Departure and arrival cities 
 - Date and time of departure  
-- Flight price  
+- Flight price 
+- Seat availability
+- Flight type (Domestic / International) 
 
 ### 🎫 Ticket
 Contains ticket and passenger details:
-- Passenger info (name, surname, OIB, email, phone, country)  
+- Passenger info (name, surname, ID number, email, phone, country)  
 - Linked flight (**ForeignKey → Flight**)  
 - Seat class and seat number  
 - Payment method  
@@ -48,7 +50,13 @@ Contains ticket and passenger details:
 
 ---
 
-## ⚙️ How to Run Locally
+## ⚙️ How to Run with Docker + PostgreSQL + Flyway
+The project includes a fully containerized environment with:
+- 🐍 Django (Python 3.11)
+- 🐘 PostgreSQL (database)
+- 🚀 Flyway (for database schema migrations)
+
+## 🔧 Steps to Start
 
 1️⃣ **Clone the repository**
 ```bash
@@ -56,52 +64,82 @@ git clone https://github.com/leonserka/airline-reservation-system-final-.git
 cd airline_reservation_django
 ```
 
-2️⃣ **Install dependencies**
+2️⃣ **Build and start all containers**
 ```bash
-pip install -r requirements.txt
+docker-compose up --build
 ```
+This will:
+- Start the PostgreSQL database on port 5432
+- Automatically apply all Flyway migrations (`/flyway/sql/V1__initial_schema.sql`)
+- Launch the Django app on port 8000
 
-3️⃣ **Apply database migrations**
+3️⃣ **Open in browser**
 ```bash
-python manage.py migrate
-```
-
-4️⃣ **Start the development server**
-```bash
-python manage.py runserver
-```
-
-5️⃣ **Open in browser**
-```
 http://127.0.0.1:8000/
 ```
 
----
-
-## 👩‍💻 Admin Panel
-
+4️⃣ **Access the Django Admin Panel**
 Access the Django Admin interface:
-```
+```bash
 http://127.0.0.1:8000/admin/
 ```
 
-Create a superuser:
+Create a superuser (inside the container):
 ```bash
-python manage.py createsuperuser
+docker exec -it airline_django python manage.py createsuperuser
+
+```
+
+
+5️⃣ **Stop containers**
+```bash
+docker-compose down
+
+```
+To remove all data and rebuild from scratch:
+```bash
+docker-compose down -v --rmi all
+
 ```
 
 ---
 
-## 🗂️ Project Structure
+## ⚙️ Default Environment Variables
+Defined in docker-compose.yml:
+```bash
+POSTGRES_USER: airline_user
+POSTGRES_PASSWORD: airline_pass
+POSTGRES_DB: airline_db
+
 ```
+
+---
+
+## 🗄️ Database Migrations
+Database structure is version-controlled with Flyway.
+All schema definitions are located in:
+```bash
+flyway/sql/V1__initial_schema.sql
+
+```
+
+---
+## 🗂️ Project Structure (after migrating to Docker, PostgreSQL, and Flyway.)
+
+```bash
 airline_reservation_django\
 ├── requirements.txt                # Project dependencies
 ├── README.md                       # Project documentation
+├── Dockerfile                      # Defines how the Django application is built inside a container
+├── docker-compose.yml              # Orchestrates all services (Django, PostgreSQL, and Flyway) and runs them together.
 ├── .gitignore                      # Git ignore rules
-├── venv\                      
+├── venv\
+├── flyway\                         # Contains database migration scripts
+│   └── sql\                        
+│       └── V1__initial_schema.sql  # Initial PostgreSQL schema
+│
 └── airline_reservation_django\
     ├── manage.py                   # Django management script (runserver, migrate, etc.)
-    ├── db.sqlite3                  # SQLite database (local development)
     │
     ├── airline_project\            # Main Django project configuration
     │   ├── __init__.py
@@ -120,14 +158,6 @@ airline_reservation_django\
     │   ├── tests.py                # Automated tests
     │   ├── urls.py                 # App-specific routes
     │   │
-    │   ├── migrations\             # Database migrations (auto-generated by Django)
-    │   │   ├── 0001_initial.py
-    │   │   ├── 0002_ticket_country_code_alter_ticket_id_number_and_more.py
-    │   │   ├── 0003_ticket_payment_status_ticket_status.py
-    │   │   ├── 0004_remove_flight_baggage_allowance.py
-    │   │   ├── 0005_ticket_extra_equipment_ticket_extra_luggage.py
-    │   │   ├── 0006_ticket_purchased_by.py        
-    │   │   └── __init__.py
     │   │
     │   ├── static\                     # Static files (CSS, JS, images)
     │   │   └── flights\
@@ -178,46 +208,51 @@ airline_reservation_django\
 ---
 
 ## 📦 Technologies Used
-- Python (Django Framework)  
-- SQLite / PostgreSQL database  
-- HTML, CSS, JavaScript  
-- Bootstrap (for frontend styling)
+- 🐍 Python (Django Framework)
+- 🐘 PostgreSQL — primary database
+- 🚀 Flyway — version-controlled database migrations
+- 🐳 Docker & Docker Compose — containerized environment
+- 💻 HTML, CSS, JavaScript
+- 🎨 Bootstrap — frontend styling
 
 ---
 
 ## 🗄️ Database Technology
 
-This project uses **SQLite** as the default database engine provided by Django.  
-SQLite is lightweight, file-based, and perfect for local development and testing.
+This project uses **PostgreSQL** as the primary database engine, managed through Flyway migrations for schema version control.
+All database tables and structures are defined in SQL migration files stored under:
+```bash
+flyway/sql/
+```
+When the containers start, Flyway automatically applies any new migrations to keep the database schema up to date.
 
-For production environments, the project can easily be configured to use **PostgreSQL**,  
-a more robust and scalable relational database system.
 
-**Default configuration (development):**
-- Database: `SQLite`
-- File: `db.sqlite3`
-- No additional setup required
+**Default configuration (docker-compose.yml):**
+- Database: airline_db
+- User: airline_user
+- Password: airline_pass
+- Port: 5432
 
-**Optional configuration (production):**
-- Database: `PostgreSQL`
-- Driver: `psycopg2`
-- Suitable for deployment on platforms such as Render, Railway, or AWS
+This setup ensures consistent database state across all environments — development, testing, and production.
+
 
 ---
 
 ## 📅 Recent Updates
 
-| Date       | Version | Highlights |
-|------------|----------|-------------|
+| Date | Version | Highlights |
+|------|----------|-------------|
 | **2025-10-25** | v1.0 | Base booking flow, flight search, login/register, ticket issue & cancel (**PLUS only**), seat map, admin CRUD for flights. |
 | **2025-10-31** | v1.1 | Multi-passenger booking & seat selection; hide past flights (`date >= today`); new Step 4 (**Extras: luggage/equipment**) and Step 5 (**Payment**); total price includes extras × passengers; `Ticket.purchased_by` for per-user bookings list; **About Ticket** shows extras & PDF with Code128 barcode; session scoping for seats per flight; bugfixes & cleanup. |
+| **2025-11-02** | v1.2 | Migrated project to **PostgreSQL** with **Flyway** and **Docker Compose**; added persistent schema migrations; configured `docker-compose.yml` and `Dockerfile`; removed old `db.sqlite3`; created superuser inside container; updated `.gitignore` and `README.md` with full Docker setup documentation. |
+
 
 
 ## 🚧 Future Improvements
 - Admin section: List all flights with filter by route (departure Split, arrival Madrid)
 - Cancel flight (admin) — delete flight from database
 - Check all bought tickets by route 
-- sending email to cusomer who bought ticket
+- sending email to customer who bought ticket
 - Admin dashboard with earnings display and statistics (daily/weekly/monthly, top routes, occupancy)
 
 ---
@@ -230,3 +265,6 @@ This project is open-source and free to use, modify, and distribute — attribut
 ## ✍️ Author
 **Leon Serka**  
 [https://github.com/leonserka](https://github.com/leonserka)
+
+---
+

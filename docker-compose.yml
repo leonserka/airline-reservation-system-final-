@@ -1,0 +1,27 @@
+version: '3.9'
+
+services:
+  flyway:
+    image: flyway/flyway:10
+    command: >
+      -url=jdbc:postgresql://host.docker.internal:5432/airline_db
+      -user=bususer
+      -password=bus
+      -locations=filesystem:/flyway/sql
+      migrate
+    volumes:
+      - ./flyway/sql:/flyway/sql
+
+  django:
+    build: .
+    container_name: airline_django
+    working_dir: /app/airline_reservation_django
+    command: python manage.py runserver 0.0.0.0:8000
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/app
+    depends_on:
+      - flyway
+    environment:
+      DJANGO_SETTINGS_MODULE: airline_project.settings

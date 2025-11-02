@@ -76,10 +76,19 @@ WSGI_APPLICATION = 'airline_project.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'airline_db',
+        'USER': 'bususer',
+        'PASSWORD': 'bus',
+        'HOST': 'host.docker.internal',  # jer PostgreSQL već radi van Dockera
+        'PORT': '5432',
     }
 }
+
+MIGRATION_MODULES = {
+    'flights': None,
+}
+
 
 
 # Password validation
