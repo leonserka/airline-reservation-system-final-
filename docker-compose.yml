@@ -1,27 +1,66 @@
 version: '3.9'
 
 services:
+  db:
+    image: postgres:17
+    environment:
+      POSTGRES_USER: bususer
+      POSTGRES_PASSWORD: bus
+      POSTGRES_DB: airline_db
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - "5434:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U bususer -d airline_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
   flyway:
     image: flyway/flyway:10
     command: >
-      -url=jdbc:postgresql://host.docker.internal:5432/airline_db
+      -url=jdbc:postgresql://db:5432/airline_db
       -user=bususer
       -password=bus
       -locations=filesystem:/flyway/sql
       migrate
     volumes:
       - ./flyway/sql:/flyway/sql
+    depends_on:
+      db:
+        condition: service_healthy
 
   django:
     build: .
-    container_name: airline_django
     working_dir: /app/airline_reservation_django
-    command: python manage.py runserver 0.0.0.0:8000
+    command: bash -c "while ! nc -z db 5432; do sleep 1; done; python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
     ports:
       - "8000:8000"
     volumes:
       - .:/app
     depends_on:
-      - flyway
+      flyway:
+        condition: service_completed_successfully
     environment:
       DJANGO_SETTINGS_MODULE: airline_project.settings
+      DJANGO_DB_HOST: db
+      DJANGO_DB_NAME: airline_db
+      DJANGO_DB_USER: bususer
+      DJANGO_DB_PASSWORD: bus
+
+  pgadmin:
+    image: dpage/pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+    ports:
+      - "5052:80"
+    depends_on:
+      - db
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin  # ✅ dodano
+
+volumes:
+  pgdata:
+  pgadmin_data:  # ✅ dodano

@@ -80,7 +80,7 @@ DATABASES = {
         'NAME': 'airline_db',
         'USER': 'bususer',
         'PASSWORD': 'bus',
-        'HOST': 'host.docker.internal',  # jer PostgreSQL već radi van Dockera
+        'HOST': 'db',  
         'PORT': '5432',
     }
 }
