@@ -32,6 +32,8 @@ staticfiles/
 media/
 static/
 uploads/
+mediafiles/
+static_root/
 
 # --- Logs, backups, and temp files ---
 *.log
@@ -41,17 +43,28 @@ uploads/
 *.pid
 ~$*
 *.tar
+*.tar.gz
+*.log.*
+*.pid
+*.sock
 
 # --- IDE and editor settings ---
 .vscode/
+.vscode/settings.json
+.vscode/launch.json
 .idea/
 *.sublime-workspace
 *.sublime-project
+*.iml
 
 # --- OS-specific files ---
 .DS_Store
 Thumbs.db
 desktop.ini
+ehthumbs.db
+$RECYCLE.BIN/
+.AppleDouble
+.LSOverride
 
 # --- Testing, coverage, reports ---
 .coverage
@@ -69,6 +82,7 @@ dist/
 *.egg-info/
 *.egg
 .eggs/
+output/
 
 # --- Deployment / cache ---
 __pypackages__/
@@ -76,20 +90,23 @@ __pypackages__/
 *.spec
 *.lock
 *.cache/
-*.log.*
 
 # --- Docker files ---
 docker-compose.override.yml
-*.pid
-*.sock
-*.tar
-*.bak
+*.env.backup
+docker-data/
+postgres_data/
+pgdata/
 
 # --- Flyway ---
 flyway/sql/*.tmp
 flyway/drivers/
 flyway/conf/
 
-# --- PyInstaller / compiled executables ---
-*.spec
-output/
+# --- Django specific ---
+*.pot
+*.mo
+
+# --- Migrations (ignored if using Flyway) ---
+airline_reservation_django/flights/migrations/*.py
+!airline_reservation_django/flights/migrations/__init__.py
