@@ -57,7 +57,6 @@ def book_step1(request, flight_id):
         'num_passengers': num_passengers
     })
 
-
 @login_required
 def book_step2(request, flight_id):
     flight = get_object_or_404(Flight, id=flight_id)
@@ -105,17 +104,22 @@ def book_step3(request, flight_id):
         for seat in range(1, 5):
             seat_id = (row - 1) * 4 + seat
             top = 105 + (row - 1) * 25.1
-            left = 150 + (seat - 1 if seat <= 2 else seat - 3) * 23
-            pos_data = {
-                'seat_id': seat_id,
-                'top': top,
-                'left': left,
-                'occupied': str(seat_id) in taken_seats or str(seat_id) in selected_seats
-            }
             if seat <= 2:
-                row_seats['left'].append(pos_data)
+                left = 150 + (seat - 1) * 23
+                row_seats['left'].append({
+                    'seat_id': seat_id,
+                    'top': top,
+                    'left': left,
+                    'occupied': str(seat_id) in taken_seats or str(seat_id) in selected_seats
+                })
             else:
-                row_seats['right'].append(pos_data)
+                right = 150 + (seat - 3) * 23
+                row_seats['right'].append({
+                    'seat_id': seat_id,
+                    'top': top,
+                    'left': right,
+                    'occupied': str(seat_id) in taken_seats or str(seat_id) in selected_seats
+                })
         seat_positions.append(row_seats)
 
     if request.method == 'POST':
@@ -135,8 +139,7 @@ def book_step3(request, flight_id):
 
     return render(request, 'flights/book_step3.html', {
         'flight': flight,
-        'return_flight': return_flight,
-        'departure_id': departure_id,        
+        'return_flight': return_flight,        
         'seat_positions': seat_positions,
         'selected_seats': selected_seats,
         'num_passengers': num_passengers,
@@ -168,7 +171,6 @@ def book_step4(request, flight_id):
         return redirect('book_step5', flight_id=flight_id)
 
     return render(request, 'flights/book_step4.html', {'flight': flight, 'total_price': total_price})
-
 
 @login_required
 def book_step5(request, flight_id):

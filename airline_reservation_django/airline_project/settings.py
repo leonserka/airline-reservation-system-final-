@@ -25,7 +25,11 @@ SECRET_KEY = 'django-insecure-%cd4_xzak@00mbe6=7w!nhjq^yu1xt4w)_wzqwen@0ux(=d#e2
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
+
+CSRF_TRUSTED_ORIGINS = [
+    'https://*.ngrok-free.dev'
+]
 
 
 # Application definition
@@ -85,6 +89,8 @@ DATABASES = {
     }
 }
 
+import os
+
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 EMAIL_HOST = "smtp.gmail.com"
 EMAIL_PORT = 587
@@ -141,3 +147,8 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # Redirect URLs after login/logout
 LOGIN_REDIRECT_URL = 'home'   # gdje ide nakon login
 LOGOUT_REDIRECT_URL = 'home'  # gdje ide nakon logout
+
+
+MIGRATION_MODULES = {
+    'flights': None,
+}

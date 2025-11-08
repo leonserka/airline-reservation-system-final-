@@ -6,14 +6,12 @@
 
 <h1>Step 2: Choose Seat Class</h1>
 
-<!-- 🛫 Departure flight -->
 <h3>Departure flight</h3>
 <p>
   {{ flight.departure_city }} → {{ flight.arrival_city }} |
   {{ flight.date }} | €{{ flight.price }}
 </p>
 
-<!-- 🔁 Return flight -->
 {% if return_flight %}
 <h3>Return flight</h3>
 <p>

@@ -34,7 +34,14 @@ services:
   django:
     build: .
     working_dir: /app/airline_reservation_django
-    command: bash -c "while ! nc -z db 5432; do sleep 1; done; python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
+    command: >
+      bash -c "
+      while ! nc -z db 5432; do sleep 1; done;
+      python manage.py migrate &&
+      (ngrok config add-authtoken $NGROK_AUTHTOKEN &&
+      ngrok http --region=$NGROK_REGION 8000 > /dev/null &) &&
+      python manage.py runserver 0.0.0.0:8000
+      "
     ports:
       - "8000:8000"
     volumes:
@@ -42,12 +49,8 @@ services:
     depends_on:
       flyway:
         condition: service_completed_successfully
-    environment:
-      DJANGO_SETTINGS_MODULE: airline_project.settings
-      DJANGO_DB_HOST: db
-      DJANGO_DB_NAME: airline_db
-      DJANGO_DB_USER: bususer
-      DJANGO_DB_PASSWORD: bus
+    env_file:
+      - .env  
 
   pgadmin:
     image: dpage/pgadmin4
@@ -59,8 +62,8 @@ services:
     depends_on:
       - db
     volumes:
-      - pgadmin_data:/var/lib/pgadmin  # ✅ dodano
+      - pgadmin_data:/var/lib/pgadmin
 
 volumes:
   pgdata:
-  pgadmin_data:  # ✅ dodano
+  pgadmin_data:

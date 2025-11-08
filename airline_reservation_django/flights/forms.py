@@ -27,14 +27,12 @@ class FlightForm(forms.ModelForm):
             'arrival_time': forms.TimeInput(attrs={'type': 'time'}),
         }
 
-
 class RegisterForm(UserCreationForm):
     email = forms.EmailField(required=True)
 
     class Meta:
         model = User
         fields = ['username', 'email', 'password1', 'password2']
-
 
 class FlightSearchForm(forms.Form):
     departure_city = forms.ChoiceField(choices=[], label="Departure")
@@ -55,7 +53,6 @@ class FlightSearchForm(forms.Form):
 
             self.routes[dep] = list(valid_arrivals)
 
-
 class TicketForm(forms.ModelForm):
     class Meta:
         model = Ticket
@@ -64,7 +61,6 @@ class TicketForm(forms.ModelForm):
             'country_code', 'phone_number', 'seat_class',
             'seat_number', 'payment_method'
         ]
-
 
 class PassengerForm(forms.ModelForm):
     country_code = forms.ChoiceField(choices=COUNTRY_CODES)
@@ -80,18 +76,15 @@ class PassengerForm(forms.ModelForm):
             'email': forms.EmailInput(),
         }
 
-
 class ClassForm(forms.ModelForm):
     class Meta:
         model = Ticket
         fields = ['seat_class']
 
-
 class SeatForm(forms.ModelForm):
     class Meta:
         model = Ticket
         fields = ['seat_number']
-
 
 class PaymentForm(forms.Form):
     card_number = forms.CharField(
@@ -109,7 +102,6 @@ class PaymentForm(forms.Form):
         label="CVV",
         widget=forms.PasswordInput(attrs={'placeholder': '123'})
     )
-
 
 class SeatSelectionForm(forms.ModelForm):
     class Meta:

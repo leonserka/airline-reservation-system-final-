@@ -2,10 +2,12 @@
 {% load static %}
 
 {% block content %}
-
 <h1>Search Flights</h1>
 
-<!-- ✅ Search box -->
+<link rel="stylesheet" href="{% static 'flights/search.css' %}">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
 <div id="search-box">
   <label>Origin country:</label>
   <select id="origin_country">
@@ -34,56 +36,54 @@
   </select>
 
   <label>Departure date:</label>
-  <input type="text" id="departure_date">
+  <input type="text" id="departure_date" placeholder="Select departure date">
 
   <label id="return_label" style="display:none;">Return date:</label>
-  <input type="text" id="return_date" style="display:none;">
+  <input type="text" id="return_date" placeholder="Select return date" style="display:none;">
 
   <button id="searchBtn">Search flights</button>
 </div>
 
 <hr>
 
-<!-- ✅ RESULTS SECTION -->
 {% if show_results %}
   {% if flights %}
     <form id="selectFlightsForm" onsubmit="return handleFlightSelection(event)">
       <h2>Available Flights</h2>
-
       <table>
-          <tr>
-              <th>Select</th>
-              <th>From → To</th>
-              <th>Date</th>
-              <th>Price</th>
-          </tr>
-          {% for flight in flights %}
-          <tr>
-              <td><input type="radio" name="departure_flight" value="{{ flight.id }}"></td>
-              <td>{{ flight.departure_city }} → {{ flight.arrival_city }}</td>
-              <td>{{ flight.date }}</td>
-              <td>€{{ flight.price }}</td>
-          </tr>
-          {% endfor %}
+        <tr>
+          <th>Select</th>
+          <th>From → To</th>
+          <th>Date</th>
+          <th>Price</th>
+        </tr>
+        {% for flight in flights %}
+        <tr>
+          <td><input type="radio" name="departure_flight" value="{{ flight.id }}"></td>
+          <td>{{ flight.departure_city }} → {{ flight.arrival_city }}</td>
+          <td>{{ flight.date }}</td>
+          <td>${{ flight.price }}</td>
+        </tr>
+        {% endfor %}
       </table>
 
       {% if return_flights %}
       <h2>Return Flights</h2>
       <table>
-          <tr>
-              <th>Select</th>
-              <th>From → To</th>
-              <th>Date</th>
-              <th>Price</th>
-          </tr>
-          {% for flight in return_flights %}
-          <tr>
-              <td><input type="radio" name="return_flight" value="{{ flight.id }}"></td>
-              <td>{{ flight.departure_city }} → {{ flight.arrival_city }}</td>
-              <td>{{ flight.date }}</td>
-              <td>€{{ flight.price }}</td>
-          </tr>
-          {% endfor %}
+        <tr>
+          <th>Select</th>
+          <th>From → To</th>
+          <th>Date</th>
+          <th>Price</th>
+        </tr>
+        {% for flight in return_flights %}
+        <tr>
+          <td><input type="radio" name="return_flight" value="{{ flight.id }}"></td>
+          <td>{{ flight.departure_city }} → {{ flight.arrival_city }}</td>
+          <td>{{ flight.date }}</td>
+          <td>${{ flight.price }}</td>
+        </tr>
+        {% endfor %}
       </table>
       {% endif %}
 
@@ -98,7 +98,6 @@
   {% endif %}
 {% endif %}
 
-<!-- ✅ LOGIN / REGISTER LINKS -->
 {% if user.is_staff %}
   <a href="{% url 'create_flight' %}">Create New Flight</a>
 {% endif %}
@@ -110,11 +109,5 @@
   <a href="{% url 'register' %}">Register</a>
 {% endif %}
 
-<!-- ✅ External CSS -->
-<link rel="stylesheet" href="{% static 'flights/search.css' %}">
-
-<!-- ✅ External JS -->
-<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 <script src="{% static 'flights/search.js' %}"></script>
-
 {% endblock %}

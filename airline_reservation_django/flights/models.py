@@ -28,7 +28,6 @@ class Flight(models.Model):
     def __str__(self):
         return f"{self.flight_number} | {self.departure_city} → {self.arrival_city} | {self.date}"
 
-
 class Ticket(models.Model):
     
     PAYMENT_STATUS_CHOICES = [
@@ -68,4 +67,3 @@ class Ticket(models.Model):
 
     def __str__(self):
         return f"{self.passenger_name} {self.passenger_surname} | {self.flight.flight_number}"
-
