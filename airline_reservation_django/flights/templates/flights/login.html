@@ -1,6 +1,25 @@
+{% extends 'flights/base.html' %}
+{% load static %}
+
+{% block content %}
 <h1>Login</h1>
-<form method="post">
+
+<form method="post" class="login-form">
     {% csrf_token %}
     {{ form.as_p }}
-    <button type="submit">Login</button>
+
+    <button type="submit" class="login-btn">Login</button>
 </form>
+
+<p class="login-text">
+    Don't have an account?
+    <a href="{% url 'register' %}" class="login-link">Register now</a>
+</p>
+
+<p class="login-text">
+    Forgot your password?
+    <a href="{% url 'password_reset' %}" class="login-link">Reset it here</a>
+</p>
+
+<link rel="stylesheet" href="{% static 'flights/login.css' %}">
+{% endblock %}

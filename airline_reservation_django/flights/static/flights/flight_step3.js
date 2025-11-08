@@ -1,15 +1,14 @@
-document.addEventListener("DOMContentLoaded", function() {
+document.addEventListener("DOMContentLoaded", function () {
     const seats = document.querySelectorAll('.seat');
+    const input = document.getElementById('selected_seat_input');
 
     seats.forEach(seat => {
-        seat.addEventListener('click', function() {
-            if (seat.classList.contains('occupied')) return; 
+        seat.addEventListener('click', function () {
 
-            if (seat.classList.contains('canceled')) {
-                seat.classList.remove('canceled');
-                seat.classList.add('available');
-            }
+            // Ne možeš kliknuti zauzeto
+            if (seat.classList.contains('occupied')) return;
 
+            // Samo vizualno makni selekciju svima
             seats.forEach(s => {
                 if (!s.classList.contains('occupied')) {
                     s.classList.remove('selected');
@@ -17,17 +16,12 @@ document.addEventListener("DOMContentLoaded", function() {
             });
 
             seat.classList.add('selected');
-            document.getElementById('selected-seat-text').innerText = "Selected Seat: " + seat.dataset.seat;
-            document.querySelector('.continue-btn').disabled = false;
 
-            fetch('/save-seat/', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
-                },
-                body: JSON.stringify({ selected_seat: seat.dataset.seat })
-            });
+            // Stavi seat ID u hidden input
+            input.value = seat.dataset.seat;
+
+            // Submit forme
+            document.forms[0].submit();
         });
     });
 });

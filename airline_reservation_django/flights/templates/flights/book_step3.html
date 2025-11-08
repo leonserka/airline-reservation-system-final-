@@ -2,16 +2,35 @@
 {% load static %}
 
 {% block content %}
-  <h1>Step 3: Select Your Seats</h1>
-  <p>Flight: {{ flight.departure_city }} → {{ flight.arrival_city }} | {{ flight.date }}</p>
-  <p>Selected Class: {{ request.session.seat_class }}</p>
-  <p>Total Price: {{ total_price }} €</p>
 
-  <p>You need to select {{ num_passengers }} seat{{ num_passengers|pluralize:"s" }}.</p>
-  <p>Selected: {{ selected_seats|length }} / {{ num_passengers }}</p>
+<link rel="stylesheet" href="{% static 'flights/flight_step3.css' %}">
+<script src="{% static 'flights/flight_step3.js' %}"></script>
 
-  <form method="post">
+<h1>Step 3: Select Your Seats</h1>
+
+{% if return_flight and flight.id != departure_id %}
+    <h2 class="flight-type return">Selecting seats for RETURN flight</h2>
+{% else %}
+    <h2 class="flight-type departure">Selecting seats for DEPARTURE flight</h2>
+{% endif %}
+
+<p><strong>{{ flight.departure_city }} → {{ flight.arrival_city }}</strong></p>
+<p>{{ flight.date }} | {{ flight.price }} €</p>
+
+{% if return_flight %}
+    <hr>
+    <h3>Your Return Flight</h3>
+    <p><strong>{{ return_flight.departure_city }} → {{ return_flight.arrival_city }}</strong></p>
+    <p>{{ return_flight.date }} | {{ return_flight.price }} €</p>
+    <hr>
+{% endif %}
+
+<p>You need to select {{ num_passengers }} seat{{ num_passengers|pluralize:"s" }} for this flight.</p>
+<p>Selected: {{ selected_seats|length }} / {{ num_passengers }}</p>
+
+<form method="post">
     {% csrf_token %}
+
     <div class="seat-map-container">
         {% for row in seat_positions %}
             <div class="row">
@@ -19,11 +38,12 @@
                     {% for seat in row.left %}
                         <div 
                             class="seat 
-                                {% if seat.occupied %}occupied{% elif seat.seat_id|stringformat:"s" in selected_seats %}selected{% endif %}" 
-                            id="seat-{{ seat.seat_id }}" 
-                            style="top: {{ seat.top }}px; left: {{ seat.left }}px;"
+                                {% if seat.occupied %}occupied
+                                {% elif seat.seat_id|stringformat:'s' in selected_seats %}selected{% endif %}"
+                            id="seat-{{ seat.seat_id }}"
                             data-seat="{{ seat.seat_id }}"
-                            onclick="selectSeat('{{ seat.seat_id }}')">
+                            data-top="{{ seat.top }}"
+                            data-left="{{ seat.left }}">
                             {{ seat.seat_id }}
                         </div>
                     {% endfor %}
@@ -31,13 +51,14 @@
 
                 <div class="right-side">
                     {% for seat in row.right %}
-                        <div 
+                        <div
                             class="seat 
-                                {% if seat.occupied %}occupied{% elif seat.seat_id|stringformat:"s" in selected_seats %}selected{% endif %}" 
-                            id="seat-{{ seat.seat_id }}" 
-                            style="top: {{ seat.top }}px; left: {{ seat.left }}px;"
+                                {% if seat.occupied %}occupied
+                                {% elif seat.seat_id|stringformat:'s' in selected_seats %}selected{% endif %}"
+                            id="seat-{{ seat.seat_id }}"
                             data-seat="{{ seat.seat_id }}"
-                            onclick="selectSeat('{{ seat.seat_id }}')">
+                            data-top="{{ seat.top }}"
+                            data-left="{{ seat.left }}">
                             {{ seat.seat_id }}
                         </div>
                     {% endfor %}
@@ -47,28 +68,10 @@
     </div>
 
     <input type="hidden" name="selected_seat" id="selected_seat_input">
-    
+
     {% if selected_seats|length >= num_passengers %}
-      <button type="submit" formaction="{% url 'book_step4' flight.id %}" class="continue-btn">
-        Continue to Payment
-      </button>
+        <button type="submit" class="continue-btn">Continue →</button>
     {% endif %}
-  </form>
+</form>
 
-  <link rel="stylesheet" href="{% static 'flights/flight_step3.css' %}">
-  <script>
-    function selectSeat(seatId) {
-        const seatDiv = document.getElementById('seat-' + seatId);
-        if (seatDiv.classList.contains('occupied')) return;
-
-        if (seatDiv.classList.contains('selected')) {
-            seatDiv.classList.remove('selected');
-            removeSeatFromSession(seatId);
-        } else {
-            seatDiv.classList.add('selected');
-            document.getElementById('selected_seat_input').value = seatId;
-            document.forms[0].submit();
-        }
-    }
-  </script>
 {% endblock %}

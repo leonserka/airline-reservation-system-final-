@@ -13,7 +13,9 @@ CLASS_CHOICES = [
 
 class Flight(models.Model):
     flight_number = models.CharField(max_length=10)
+    departure_country = models.CharField(max_length=50, null=True, blank=True)
     departure_city = models.CharField(max_length=50)
+    arrival_country = models.CharField(max_length=50, null=True, blank=True)
     arrival_city = models.CharField(max_length=50)
     date = models.DateField()
     departure_time = models.TimeField()

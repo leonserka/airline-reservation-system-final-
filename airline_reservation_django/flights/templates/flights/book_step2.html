@@ -1,57 +1,81 @@
 {% extends 'flights/base.html' %}
+{% load static %}
 {% block content %}
+
+<link rel="stylesheet" href="{% static 'flights/step2.css' %}">
+
 <h1>Step 2: Choose Seat Class</h1>
-<p>Flight: {{ flight.departure_city }} → {{ flight.arrival_city }} | {{ flight.date }}</p>
-<p>Total Price: {{ total_price }} €</p>
+
+<!-- 🛫 Departure flight -->
+<h3>Departure flight</h3>
+<p>
+  {{ flight.departure_city }} → {{ flight.arrival_city }} |
+  {{ flight.date }} | €{{ flight.price }}
+</p>
+
+<!-- 🔁 Return flight -->
+{% if return_flight %}
+<h3>Return flight</h3>
+<p>
+  {{ return_flight.departure_city }} → {{ return_flight.arrival_city }} |
+  {{ return_flight.date }} | €{{ return_flight.price }}
+</p>
+{% endif %}
+
+<hr>
+
+<p><strong>Total Price:</strong> €{{ total_price }}</p>
 
 <form method="post">
-    {% csrf_token %}
-    <table border="1" cellpadding="5" cellspacing="0">
-        <tr>
-            <th>Feature</th>
-            {% for option in seat_options %}
-                <th>{{ option.name }} (+{{ option.price }} €)</th>
-            {% endfor %}
-        </tr>
-        <tr>
-            <td>Hand luggage 7 kg</td>
-            <td>✔</td>
-            <td>✔</td>
-            <td>✔</td>
-        </tr>
-        <tr>
-            <td>Priority boarding</td>
-            <td>✖</td>
-            <td>✔</td>
-            <td>✔</td>
-        </tr>
-        <tr>
-            <td>Locker bag 10 kg</td>
-            <td>✖</td>
-            <td>✔</td>
-            <td>✔</td>
-        </tr>
-        <tr>
-            <td>Check-in bag 20 kg</td>
-            <td>✖</td>
-            <td>✖</td>
-            <td>✔</td>
-        </tr>
-        <tr>
-            <td>Change flight without fee</td>
-            <td>✖</td>
-            <td>✖</td>
-            <td>✔</td>
-        </tr>
-        <tr>
-            <td>Select</td>
-            {% for option in seat_options %}
-                <td>
-                    <input type="radio" name="seat_class" value="{{ option.name }}" required>
-                </td>
-            {% endfor %}
-        </tr>
-    </table>
-    <button type="submit">Next</button>
+  {% csrf_token %}
+  <table class="seat-table">
+    <tr>
+      <th>Feature</th>
+      {% for option in seat_options %}
+        <th>{{ option.name }} (+{{ option.price }} €)</th>
+      {% endfor %}
+    </tr>
+    <tr>
+      <td>Hand luggage 7 kg</td>
+      <td>✔</td>
+      <td>✔</td>
+      <td>✔</td>
+    </tr>
+    <tr>
+      <td>Priority boarding</td>
+      <td>✖</td>
+      <td>✔</td>
+      <td>✔</td>
+    </tr>
+    <tr>
+      <td>Locker bag 10 kg</td>
+      <td>✖</td>
+      <td>✔</td>
+      <td>✔</td>
+    </tr>
+    <tr>
+      <td>Check-in bag 20 kg</td>
+      <td>✖</td>
+      <td>✖</td>
+      <td>✔</td>
+    </tr>
+    <tr>
+      <td>Change flight without fee</td>
+      <td>✖</td>
+      <td>✖</td>
+      <td>✔</td>
+    </tr>
+    <tr>
+      <td><strong>Select</strong></td>
+      {% for option in seat_options %}
+        <td class="center-cell">
+          <input type="radio" name="seat_class" value="{{ option.name }}" required>
+        </td>
+      {% endfor %}
+    </tr>
+  </table>
+
+  <button type="submit" class="continue-btn">Continue →</button>
 </form>
+
 {% endblock %}

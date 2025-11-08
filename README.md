@@ -7,7 +7,7 @@ The **Airline Reservation System** is a full-stack web application built with th
 ## 🚀 Main Features
 
 ### 👤 Users
-- User registration and login  
+- User registration, login and password reset via email
 - Search for available flights by origin, destination, and date  
 - Multi-step booking process:
   1. Enter personal information  
@@ -32,7 +32,7 @@ The **Airline Reservation System** is a full-stack web application built with th
 ### ✈️ Flight
 Contains flight details:
 - Flight number  
-- Departure and arrival cities 
+- Departure and arrival country & city
 - Date and time of departure  
 - Flight price 
 - Seat availability
@@ -153,6 +153,7 @@ airline_reservation_django\
     │   ├── admin.py                # Django admin configuration for models
     │   ├── apps.py                 # App registration
     │   ├── country_codes.py        # Country code list for form dropdowns
+    │   ├── choices.py              # Centralized reusable choice lists
     │   ├── forms.py                # Django forms (booking, registration, etc.)
     │   ├── models.py               # Database models (Flight, Ticket)
     │   ├── tests.py                # Automated tests
@@ -166,7 +167,12 @@ airline_reservation_django\
     │   │       ├── flight_list.js      # Script for filtering/searching flights
     │   │       ├── flight_step1.js     # Handles Step 1 interactions
     │   │       ├── flight_step3.css    # Seat map styling
-    │   │       └── flight_step3.js     # Seat selection logic
+    │   │       ├── flight_step3.js     # Seat selection logic
+    │   │       ├── login.css           # Styling for login page
+    │   │       ├── passenger_step1.css # Styling for passenger details (Step 1)
+    │   │       ├── search.css          # Styling for flight search UI
+    │   │       ├── search.js           # JS logic for dynamic flight search
+    │   │       └── step2.css           # Styling for seat class selection (Step 2)
     │   │
     │   ├── templates\                  # HTML templates for the application
     │   │   └── flights\
@@ -182,9 +188,13 @@ airline_reservation_django\
     │   │       ├── book_step5.html     # Step 5: Confirmation and payment
     │   │       ├── book_success.html   # Success message after booking
     │   │       ├── check_booked_flights.html   # User’s booked tickets list
-    │   │       ├── about_ticket.html           # Detailed ticket information
-    │   │       ├── cancel_success.html         # Ticket cancellation confirmation
+    │   │       ├── about_ticket.html   # Detailed ticket information
+    │   │       ├── cancel_success.html # Ticket cancellation confirmation
     │   │       ├── login.html          # User login page
+    │   │       ├── password_reset.html # Form where user enters email to reset password        
+    │   │       ├── password_reset_complete.html  # Final success page after password is changed
+    │   │       ├── password_reset_confirm.html   # Page where user sets a new password (token link)
+    │   │       ├── password_reset_done.html      # Confirmation that reset email was sent
     │   │       └── register.html       # User registration page
     │   │
     │   ├── utils\                       # Helper utilities used across the app
@@ -245,6 +255,7 @@ This setup ensures consistent database state across all environments — develop
 | **2025-10-25** | v1.0 | Base booking flow, flight search, login/register, ticket issue & cancel (**PLUS only**), seat map, admin CRUD for flights. |
 | **2025-10-31** | v1.1 | Multi-passenger booking & seat selection; hide past flights (`date >= today`); new Step 4 (**Extras: luggage/equipment**) and Step 5 (**Payment**); total price includes extras × passengers; `Ticket.purchased_by` for per-user bookings list; **About Ticket** shows extras & PDF with Code128 barcode; session scoping for seats per flight; bugfixes & cleanup. |
 | **2025-11-02** | v1.2 | Migrated project to **PostgreSQL** with **Flyway** and **Docker Compose**; added persistent schema migrations; configured `docker-compose.yml` and `Dockerfile`; removed old `db.sqlite3`; created superuser inside container; updated `.gitignore` and `README.md` with full Docker setup documentation. |
+| **2025-11-08** | v1.3 | Cleanup & UI refactor: moved inline CSS/JS into static files ( `search.css/js`, `step2.css`,  `flight_step3.css`, etc.); extracted `COUNTRY_CHOICES` into `choices.py`; improved login/register pages with Forgot Password + Register Now; configured full email password-reset flow (Gmail SMTP + Django password reset views); bugfixes in multi-flight seat selection | 
 
 
 
@@ -254,6 +265,7 @@ This setup ensures consistent database state across all environments — develop
 - Check all bought tickets by route 
 - sending email to customer who bought ticket
 - Admin dashboard with earnings display and statistics (daily/weekly/monthly, top routes, occupancy)
+- Integration of PayPal payments via API for simulated transactions.
 
 ---
 

@@ -2,25 +2,45 @@
 {% load static %}
 
 {% block content %}
-<h1>Step 1: Passenger Details</h1>
-<p>Flight: {{ flight.departure_city }} → {{ flight.arrival_city }} | {{ flight.date }}</p>
+<link rel="stylesheet" href="{% static 'flights/passenger_step1.css' %}">
 
-<form method="post">
-    {% csrf_token %}
-    
-    <label for="num_passengers">Number of passengers:</label>
-    <input type="number" name="num_passengers" id="num_passengers" value="{{ num_passengers }}" min="1" max="9" required>
-    <hr>
+<h1>Passenger Details</h1>
 
-    {% for form in passenger_forms %}
-        <fieldset style="margin-bottom: 20px; border: 1px solid #ccc; padding: 10px;">
-            <legend>Passenger {{ forloop.counter }}</legend>
-            {{ form.as_p }}
-        </fieldset>
-    {% endfor %}
+<div class="flight-box">
+  <h3>Departure flight</h3>
+  <p>
+    {{ flight.departure_city }} → {{ flight.arrival_city }}<br>
+    {{ flight.date|date:"M. d, Y" }} | ${{ flight.price }}
+  </p>
+</div>
 
-    <button type="submit">Next</button>
+{% if return_flight %}
+<div class="flight-box">
+  <h3>Return flight</h3>
+  <p>
+    {{ return_flight.departure_city }} → {{ return_flight.arrival_city }}<br>
+    {{ return_flight.date|date:"M. d, Y" }} | ${{ return_flight.price }}
+  </p>
+</div>
+{% endif %}
+
+<hr>
+
+<p><strong>Number of passengers:</strong> {{ num_passengers }}</p>
+
+<form method="post" class="passenger-form">
+  {% csrf_token %}
+
+  {% for form in passenger_forms %}
+    <fieldset class="passenger-fieldset">
+      <legend>Passenger {{ forloop.counter }}</legend>
+      {{ form.as_p }}
+    </fieldset>
+  {% endfor %}
+
+  <button type="submit" class="continue-btn">
+    Continue →
+  </button>
 </form>
 
-<script src="{% static 'flights/flight_step1.js' %}"></script>
 {% endblock %}

@@ -3,75 +3,118 @@
 
 {% block content %}
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Search Flights</title>
+<h1>Search Flights</h1>
 
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-</head>
-<body>
-    <h1>Search Flights</h1>
+<!-- ✅ Search box -->
+<div id="search-box">
+  <label>Origin country:</label>
+  <select id="origin_country">
+    <option value="">-- Select country --</option>
+  </select>
 
-    <form method="get">
-        {{ form.departure_city.label_tag }} {{ form.departure_city }}
-        {{ form.arrival_city.label_tag }} {{ form.arrival_city }}
-        <input type="text" id="flight-date" name="date" placeholder="Select Date" readonly>
-        <button type="submit">Search</button>
+  <label>Pick an airport:</label>
+  <select id="origin_airport" disabled>
+    <option value="">-- Select airport --</option>
+  </select>
+
+  <label>Destination country:</label>
+  <select id="dest_country" disabled>
+    <option value="">-- Select country --</option>
+  </select>
+
+  <label>Pick an airport:</label>
+  <select id="dest_airport" disabled>
+    <option value="">-- Select airport --</option>
+  </select>
+
+  <label>Trip type:</label>
+  <select id="trip_type">
+    <option value="oneway" selected>One way</option>
+    <option value="round">Round trip</option>
+  </select>
+
+  <label>Departure date:</label>
+  <input type="text" id="departure_date">
+
+  <label id="return_label" style="display:none;">Return date:</label>
+  <input type="text" id="return_date" style="display:none;">
+
+  <button id="searchBtn">Search flights</button>
+</div>
+
+<hr>
+
+<!-- ✅ RESULTS SECTION -->
+{% if show_results %}
+  {% if flights %}
+    <form id="selectFlightsForm" onsubmit="return handleFlightSelection(event)">
+      <h2>Available Flights</h2>
+
+      <table>
+          <tr>
+              <th>Select</th>
+              <th>From → To</th>
+              <th>Date</th>
+              <th>Price</th>
+          </tr>
+          {% for flight in flights %}
+          <tr>
+              <td><input type="radio" name="departure_flight" value="{{ flight.id }}"></td>
+              <td>{{ flight.departure_city }} → {{ flight.arrival_city }}</td>
+              <td>{{ flight.date }}</td>
+              <td>€{{ flight.price }}</td>
+          </tr>
+          {% endfor %}
+      </table>
+
+      {% if return_flights %}
+      <h2>Return Flights</h2>
+      <table>
+          <tr>
+              <th>Select</th>
+              <th>From → To</th>
+              <th>Date</th>
+              <th>Price</th>
+          </tr>
+          {% for flight in return_flights %}
+          <tr>
+              <td><input type="radio" name="return_flight" value="{{ flight.id }}"></td>
+              <td>{{ flight.departure_city }} → {{ flight.arrival_city }}</td>
+              <td>{{ flight.date }}</td>
+              <td>€{{ flight.price }}</td>
+          </tr>
+          {% endfor %}
+      </table>
+      {% endif %}
+
+      <label>Number of passengers:</label>
+      <input type="number" id="num_passengers" min="1" max="9" value="1">
+
+      <br><br>
+      <button type="submit">Continue →</button>
     </form>
-
-{% if flights %}
-    <h2>Available Flights</h2>
-    <table border="1">
-        <tr>
-            <th>ID</th>
-            <th>From → To</th>
-            <th>Date</th>
-            <th>Price</th>
-            <th>Action</th>
-        </tr>
-        {% for flight in flights %}
-        <tr>
-            <td>{{ flight.id }}</td>
-            <td>{{ flight.departure_city }} → {{ flight.arrival_city }}</td>
-            <td>{{ flight.date }}</td>
-            <td>${{ flight.price }}</td>
-            <td>
-                {% if user.is_authenticated %}
-                    <a href="{% url 'book_step1' flight.id %}">Book</a>
-                {% else %}
-                    <a href="{% url 'login' %}?next={% url 'flight_list' %}">Login to Book</a>
-                {% endif %}
-            </td>
-        </tr>
-        {% endfor %}
-    </table>
+  {% else %}
+    <p>No flights found for selected route and date.</p>
+  {% endif %}
 {% endif %}
 
-
+<!-- ✅ LOGIN / REGISTER LINKS -->
 {% if user.is_staff %}
-    <a href="{% url 'create_flight' %}">Create New Flight</a>
+  <a href="{% url 'create_flight' %}">Create New Flight</a>
 {% endif %}
-
 
 {% if user.is_authenticated %}
-    <a href="{% url 'logout' %}">Logout</a>
+  <a href="{% url 'logout' %}">Logout</a>
+{% else %}
+  <a href="{% url 'login' %}">Login</a> |
+  <a href="{% url 'register' %}">Register</a>
 {% endif %}
 
+<!-- ✅ External CSS -->
+<link rel="stylesheet" href="{% static 'flights/search.css' %}">
 
-{% if not user.is_authenticated %}
-    <a href="{% url 'login' %}">Login</a> |
-    <a href="{% url 'register' %}">Register</a>
-{% endif %}
-
-<script>
-    window.availableDates = {{ available_dates|safe }};
-    window.routes = {{ form.routes|safe }};
-</script>
-<script src="{% static 'flights/flight_list.js' %}"></script>
-</body>
-</html>
+<!-- ✅ External JS -->
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<script src="{% static 'flights/search.js' %}"></script>
 
 {% endblock %}
