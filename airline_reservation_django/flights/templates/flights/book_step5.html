@@ -1,13 +1,40 @@
 {% extends 'flights/base.html' %}
+{% load static %}
 {% block content %}
 
 <h1>Step 4: Payment Details</h1>
-<p>Flight: {{ flight.departure_city }} → {{ flight.arrival_city }} | {{ flight.date }}</p>
-<p>Total Price: €{{ total_price }}</p>
 
-<form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Pay & Confirm</button>
-</form>
+<p>
+  Flight: {{ flight.departure_city }} → {{ flight.arrival_city }} | {{ flight.date }}
+</p>
+
+<h3>Total Price: €{{ total_price }}</h3>
+
+<hr>
+
+<div id="loading-overlay" class="loading-overlay">
+  <div class="loading-box">
+    <h2>Processing your payment...</h2>
+    <p>Please wait a few seconds ⏳</p>
+  </div>
+</div>
+
+<div id="paypal-button-container" style="max-width: 400px; margin-top: 20px;"></div>
+
+<!-- Učitaj CSS -->
+<link rel="stylesheet" href="{% static 'flights/book_step5.css' %}">
+
+<!-- PayPal SDK -->
+<script src="https://www.paypal.com/sdk/js?client-id={{ PAYPAL_CLIENT_ID }}&currency=EUR"></script>
+
+<!-- Varijable za JS -->
+<script>
+  const TOTAL_PRICE = "{{ total_price }}";
+  const CSRF_TOKEN = "{{ csrf_token }}";
+  const BOOK_SUCCESS_URL = "{% url 'book_success' %}";
+</script>
+
+<!-- Učitaj JS -->
+<script src="{% static 'flights/book_step5.js' %}"></script>
+
 {% endblock %}

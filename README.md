@@ -255,7 +255,8 @@ This setup ensures consistent database state across all environments — develop
 | **2025-10-25** | v1.0 | Base booking flow, flight search, login/register, ticket issue & cancel (**PLUS only**), seat map, admin CRUD for flights. |
 | **2025-10-31** | v1.1 | Multi-passenger booking & seat selection; hide past flights (`date >= today`); new Step 4 (**Extras: luggage/equipment**) and Step 5 (**Payment**); total price includes extras × passengers; `Ticket.purchased_by` for per-user bookings list; **About Ticket** shows extras & PDF with Code128 barcode; session scoping for seats per flight; bugfixes & cleanup. |
 | **2025-11-02** | v1.2 | Migrated project to **PostgreSQL** with **Flyway** and **Docker Compose**; added persistent schema migrations; configured `docker-compose.yml` and `Dockerfile`; removed old `db.sqlite3`; created superuser inside container; updated `.gitignore` and `README.md` with full Docker setup documentation. |
-| **2025-11-08** | v1.3 | Cleanup & UI refactor: moved inline CSS/JS into static files ( `search.css/js`, `step2.css`,  `flight_step3.css`, etc.); extracted `COUNTRY_CHOICES` into `choices.py`; improved login/register pages with Forgot Password + Register Now; configured full email password-reset flow (Gmail SMTP + Django password reset views); bugfixes in multi-flight seat selection | 
+| **2025-11-07** | v1.3 | Cleanup & UI refactor: moved inline CSS/JS into static files ( `search.css/js`, `step2.css`,  `flight_step3.css`, etc.); extracted `COUNTRY_CHOICES` into `choices.py`; improved login/register pages with Forgot Password + Register Now; configured full email password-reset flow (Gmail SMTP + Django password reset views); bugfixes in multi-flight seat selection | 
+| **2025-11-08** | v1.4 | Added PayPal Sandbox integration for flight payments (Step 5); implemented live PayPal button + payment confirmation; automatic PDF invoice generation (ReportLab) and email sending via Gmail SMTP after successful booking; moved PayPal scripts and overlay styles into static files (`book_step5.css` / `book_step5.js`); improved session cleanup and confirmation UX. | 
 
 
 
@@ -263,9 +264,8 @@ This setup ensures consistent database state across all environments — develop
 - Admin section: List all flights with filter by route (departure Split, arrival Madrid)
 - Cancel flight (admin) — delete flight from database
 - Check all bought tickets by route 
-- sending email to customer who bought ticket
 - Admin dashboard with earnings display and statistics (daily/weekly/monthly, top routes, occupancy)
-- Integration of PayPal payments via API for simulated transactions.
+
 
 ---
 

@@ -13,7 +13,7 @@ urlpatterns = [
     path('book/<int:flight_id>/step2/', views.book_step2, name='book_step2'),
     path('book/<int:flight_id>/step3/', views.book_step3, name='book_step3'),
     path('book/<int:flight_id>/step4/', views.book_step4, name='book_step4'),
-    path('book/<int:flight_id>/step5/', views.book_step5, name='book_step5'),
+    path('book_step5/<int:flight_id>/', views.book_step5, name='book_step5'),
     path('book/success/', views.book_success, name='book_success'),
     path('login/', auth_views.LoginView.as_view(template_name='flights/login.html'), name='login'),
     path('logout/', views.custom_logout, name='logout'),
