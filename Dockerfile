@@ -17,3 +17,5 @@ COPY . .
 EXPOSE 8000
 
 CMD ["python", "airline_reservation_django/manage.py", "runserver", "0.0.0.0:8000"]
+
+ENV PYTHONDONTWRITEBYTECODE=1
