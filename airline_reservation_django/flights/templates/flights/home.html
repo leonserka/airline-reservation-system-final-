@@ -1,14 +1,93 @@
-<h1>Welcome to the Airline Reservation System!</h1>
+{% load static %}
 
-{% if user.is_authenticated %}
-    {% if user.is_staff %}
-        <a href="{% url 'create_flight' %}">Add Flight</a>
-    {% else %}
-        <a href="{% url 'flight_list' %}">Book a Flight</a>
-        <a href="{% url 'check_booked_flights' %}">Check Booked Flights</a> 
-    {% endif %}
-    <a href="{% url 'logout' %}">Logout</a>
-{% else %}
-    <a href="{% url 'login' %}">Login</a> | 
-    <a href="{% url 'register' %}">Register</a>
+<!DOCTYPE html>
+<html lang="hr">
+<head>
+    <meta charset="UTF-8">
+    <title>Airline Reservation System</title>
+
+    <link rel="stylesheet" href="{% static 'flights/login_dropdown.css' %}">
+</head>
+<body>
+
+<header class="ca-header">
+
+    <div class="ca-left">
+        <span class="brand-text">AIRLINE RESERVATION</span>
+    </div>
+
+    <div class="ca-right">
+
+        <div class="ca-icon search-icon">🔍</div>
+
+        <div class="lang-box">hr</div>
+
+        {% if not user.is_authenticated %}
+            <button id="loginDropdownBtn" class="login-btn">Login</button>
+        {% else %}
+            <span class="user-welcome">Hi, {{ user.username }}</span>
+            <a href="{% url 'logout' %}" class="logout-link">Logout</a>
+        {% endif %}
+
+        <div class="menu-box">
+            <span>Menu</span>
+            <div class="hamburger">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+
+    </div>
+
+</header>
+
+
+{% if not user.is_authenticated %}
+<div id="loginDropdown" class="login-dropdown hidden">
+    <div class="dropdown-header">
+        <span>Login</span>
+        <button id="closeLoginDropdown" class="close-btn">✕</button>
+    </div>
+
+    <form method="POST" action="{% url 'login' %}">
+        {% csrf_token %}
+
+        <label>Username *</label>
+        <input type="text" name="username" required>
+
+        <label>Password *</label>
+        <input type="password" name="password" required>
+
+        <div class="links">
+            <a href="{% url 'register' %}">Register</a><br>
+            <a href="{% url 'password_reset' %}">Forgot password</a>
+        </div>
+
+        <button type="submit" class="login-submit">Login</button>
+    </form>
+</div>
 {% endif %}
+
+<main style="padding: 40px;">
+
+    <h1>Welcome to the Airline Reservation System!</h1>
+
+    {% if user.is_authenticated %}
+
+        {% if user.is_staff %}
+            <a href="{% url 'create_flight' %}">Add Flight</a>
+        {% else %}
+            <a href="{% url 'flight_list' %}">Book a Flight</a>
+            <a href="{% url 'check_booked_flights' %}">Check Booked Flights</a>
+        {% endif %}
+        <br><br>
+        <a href="{% url 'logout' %}">Logout</a>
+
+    {% else %}
+        <p>Dobrodošli! Prijavite se za nastavak.</p>
+    {% endif %}
+
+</main>
+<script src="{% static 'flights/login_dropdown.js' %}"></script>
+
+</body>
+</html>
