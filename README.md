@@ -257,7 +257,17 @@ This setup ensures consistent database state across all environments — develop
 | **2025-11-02** | v1.2 | Migrated project to **PostgreSQL** with **Flyway** and **Docker Compose**; added persistent schema migrations; configured `docker-compose.yml` and `Dockerfile`; removed old `db.sqlite3`; created superuser inside container; updated `.gitignore` and `README.md` with full Docker setup documentation. |
 | **2025-11-07** | v1.3 | Cleanup & UI refactor: moved inline CSS/JS into static files ( `search.css/js`, `step2.css`,  `flight_step3.css`, etc.); extracted `COUNTRY_CHOICES` into `choices.py`; improved login/register pages with Forgot Password + Register Now; configured full email password-reset flow (Gmail SMTP + Django password reset views); bugfixes in multi-flight seat selection | 
 | **2025-11-08** | v1.4 | Added PayPal Sandbox integration for flight payments (Step 5); implemented live PayPal button + payment confirmation; automatic PDF invoice generation (ReportLab) and email sending via Gmail SMTP after successful booking; moved PayPal scripts and overlay styles into static files (`book_step5.css` / `book_step5.js`); improved session cleanup and confirmation UX. | 
-
+| **2025-11-15** | v1.5 | Major ticket system overhaul:
+• Added QR code generation (qrcode + base64)
+• Replaced barcode system
+• Full redesign of the boarding pass PDF (HTML + WeasyPrint)
+• Extracted ticket CSS to /static/flights/ticket_pdf.css
+• Fixed missing template loader path & adjusted HTML template path
+• Refactored generate_ticket_pdf (clean buffer handling + external CSS load)
+• Refactored invoice PDF with cleaner typography, section titles, margins, total row redesign
+• Cleaned requirements (WeasyPrint 60.1, pydyf 0.9.0, qrcode[pil])
+• Cleaned Dockerfile & docker-compose (removed ngrok, extra deps)
+• Updated .gitignore (Flyway, Docker, staticfiles, venvs) | 
 
 
 ## 🚧 Future Improvements

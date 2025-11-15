@@ -1,0 +1,25 @@
+#search-box {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+select,
+input[type="text"],
+button {
+  padding: 5px;
+  font-size: 14px;
+}
+
+table {
+  border-collapse: collapse;
+  margin-bottom: 20px;
+}
+
+table th,
+table td {
+  border: 1px solid #aaa;
+  padding: 6px 10px;
+}

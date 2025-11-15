@@ -36,8 +36,6 @@ services:
       bash -c "
       while ! nc -z db 5432; do sleep 1; done;
       python manage.py migrate &&
-      (ngrok config add-authtoken $NGROK_AUTHTOKEN &&
-      ngrok http --region=$NGROK_REGION 8000 > /dev/null &) &&
       python manage.py runserver 0.0.0.0:8000
       "
     ports:
@@ -48,7 +46,7 @@ services:
       flyway:
         condition: service_completed_successfully
     env_file:
-      - .env  
+      - .env
 
   pgadmin:
     image: dpage/pgadmin4

@@ -9,7 +9,6 @@ __pycache__/
 *.pyo
 *.pyd
 
-
 # --- Django database and local settings ---
 db.sqlite3
 *.db
@@ -24,36 +23,32 @@ ENV/
 .virtualenv/
 
 # --- Environment / secrets ---
-*.env
 .env
 .env.*
-!example.env  # allow example env templates
+*.env
+!example.env       # allow example env templates
 
 # --- Static and media files ---
 staticfiles/
 media/
-static/
 uploads/
 mediafiles/
 static_root/
 
 # --- Logs, backups, and temp files ---
 *.log
+*.log.*
 *.bak
 *.swp
 *.tmp
 *.pid
+*.sock
 ~$*
 *.tar
 *.tar.gz
-*.log.*
-*.pid
-*.sock
 
 # --- IDE and editor settings ---
 .vscode/
-.vscode/settings.json
-.vscode/launch.json
 .idea/
 *.sublime-workspace
 *.sublime-project
@@ -105,7 +100,7 @@ flyway/sql/*.tmp
 flyway/drivers/
 flyway/conf/
 
-# --- Django specific ---
+# --- Django translations ---
 *.pot
 *.mo
 

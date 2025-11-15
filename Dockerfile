@@ -1,11 +1,27 @@
-FROM python:3.11-slim
+FROM python:3.11
 
-RUN apt-get update && apt-get install -y wget unzip && \
-    wget https://bin.equinox.io/c/bNyj1mQVY4c/ngrok-stable-linux-amd64.zip && \
-    unzip ngrok-stable-linux-amd64.zip -d /usr/local/bin && \
-    rm ngrok-stable-linux-amd64.zip
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV PYTHONUNBUFFERED=1
 
-RUN apt-get update && apt-get install -y netcat-traditional && rm -rf /var/lib/apt/lists/*
+RUN apt-get update && apt-get install -y \
+    netcat-traditional \
+    libcairo2 \
+    libpango-1.0-0 \
+    libpangocairo-1.0-0 \
+    libpangoft2-1.0-0 \
+    libgdk-pixbuf-2.0-0 \
+    libffi-dev \
+    libxml2 \
+    libxslt1.1 \
+    shared-mime-info \
+    fontconfig \
+    fonts-liberation \
+    libjpeg62-turbo \
+    zlib1g \
+    libthai-data \
+    libharfbuzz0b \
+    libfribidi0 \
+    && apt-get clean
 
 WORKDIR /app
 
@@ -17,5 +33,3 @@ COPY . .
 EXPOSE 8000
 
 CMD ["python", "airline_reservation_django/manage.py", "runserver", "0.0.0.0:8000"]
-
-ENV PYTHONDONTWRITEBYTECODE=1

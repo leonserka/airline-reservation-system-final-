@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Boarding Pass</title>
+</head>
+<body>
+
+<h1 class="title">Boarding Pass</h1>
+
+<div class="ticket">
+    <div class="left">
+
+        <div class="section-title">From</div>
+        <p class="big">{{ ticket.flight.departure_city }}</p>
+
+        <div class="section-title" style="margin-top:15px;">To</div>
+        <p class="big">{{ ticket.flight.arrival_city }}</p>
+
+        <div class="row">
+            <div>
+                <div class="label">Departure</div>
+                <div class="value">{{ ticket.flight.date }} {{ ticket.flight.departure_time }}</div>
+            </div>
+            <div>
+                <div class="label">Seat</div>
+                <div class="value">{{ ticket.seat_number|default:"N/A" }}</div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div>
+                <div class="label">Passenger</div>
+                <div class="value">{{ ticket.passenger_name }} {{ ticket.passenger_surname }}</div>
+            </div>
+            <div>
+                <div class="label">Class</div>
+                <div class="value">{{ ticket.seat_class }}</div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div>
+                <div class="label">Price Paid</div>
+                <div class="value">€{{ ticket.price_paid }}</div>
+            </div>
+            <div>
+                <div class="label">Status</div>
+                <div class="value">{{ ticket.status|capfirst }}</div>
+            </div>
+        </div>
+
+    </div>
+    <div class="right">
+        &#9992;
+
+        <img src="data:image/png;base64,{{ qr_base64 }}" class="qr-code">
+    </div>
+
+</div>
+
+</body>
+</html>
