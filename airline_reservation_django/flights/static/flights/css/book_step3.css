@@ -33,20 +33,6 @@
   background-color: gray !important;
 }
 
-.left-side {
-  position: absolute;
-  left: 0;
-}
-
-.right-side {
-  position: absolute;
-  left: 55px;
-}
-
-.row {
-  position: relative;
-}
-
 .continue-btn {
   margin-top: 20px;
 }

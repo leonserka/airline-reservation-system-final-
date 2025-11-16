@@ -15,11 +15,13 @@ button {
 
 table {
   border-collapse: collapse;
-  margin-bottom: 20px;
+  margin-top: 20px;
+  width: 100%;
 }
 
 table th,
 table td {
   border: 1px solid #aaa;
   padding: 6px 10px;
+  text-align: left;
 }
