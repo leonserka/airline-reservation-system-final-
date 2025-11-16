@@ -44,20 +44,16 @@ class FlightSearchForm(forms.Form):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        departures = Flight.objects.order_by().values_list("departure_city", flat=True).distinct()
-        arrivals = Flight.objects.order_by().values_list("arrival_city", flat=True).distinct()
+        cities = Flight.objects.order_by().values_list("departure_city", "arrival_city").distinct()
+        departures = sorted(set(c[0] for c in cities))
+        arrivals = sorted(set(c[1] for c in cities))
 
         self.fields["departure_city"].choices = [(c, c) for c in departures]
         self.fields["arrival_city"].choices = [(c, c) for c in arrivals]
 
-        self.routes = {
-            dep: list(
-                Flight.objects.filter(departure_city=dep)
-                .values_list("arrival_city", flat=True)
-                .distinct()
-            )
-            for dep in departures
-        }
+        self.routes = {dep: sorted(set(
+            Flight.objects.filter(departure_city=dep).values_list("arrival_city", flat=True)
+        )) for dep in departures}
 
 class TicketForm(forms.ModelForm):
     class Meta:

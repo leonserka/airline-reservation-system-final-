@@ -8,11 +8,7 @@ document.addEventListener("DOMContentLoaded", function () {
     seats.forEach(seat => {
         seat.addEventListener('click', function () {
             if (seat.classList.contains('occupied')) return;
-            seats.forEach(s => {
-                if (!s.classList.contains('occupied')) {
-                    s.classList.remove('selected');
-                }
-            });
+            seats.forEach(s => !s.classList.contains('occupied') && s.classList.remove('selected'));
             seat.classList.add('selected');
             input.value = seat.dataset.seat;
 

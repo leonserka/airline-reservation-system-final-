@@ -1,3 +1,14 @@
+function populateSelect(selectId, options, defaultText = "-- Select --") {
+  const select = document.getElementById(selectId);
+  select.innerHTML = `<option value="">${defaultText}</option>`;
+  options.forEach(opt => {
+    const option = document.createElement("option");
+    option.value = opt;
+    option.textContent = opt;
+    select.appendChild(option);
+  });
+}
+
 document.addEventListener("DOMContentLoaded", function () {
   const depPicker = flatpickr("#departure_date", {
     dateFormat: "Y-m-d",
@@ -13,15 +24,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   fetch("/ajax/origin_countries/")
     .then(res => res.json())
-    .then(data => {
-      const select = document.getElementById("origin_country");
-      data.forEach(country => {
-        const opt = document.createElement("option");
-        opt.value = country;
-        opt.textContent = country;
-        select.appendChild(opt);
-      });
-    });
+    .then(data => populateSelect("origin_country", data));
 
   document.getElementById("origin_country").addEventListener("change", function () {
     const airportSelect = document.getElementById("origin_airport");
@@ -31,13 +34,7 @@ document.addEventListener("DOMContentLoaded", function () {
     fetch(`/ajax/airports/?country=${encodeURIComponent(this.value)}`)
       .then(res => res.json())
       .then(data => {
-        airportSelect.innerHTML = '<option value="">-- Select airport --</option>';
-        data.forEach(a => {
-          const opt = document.createElement("option");
-          opt.value = a;
-          opt.textContent = a;
-          airportSelect.appendChild(opt);
-        });
+        populateSelect("origin_airport", data, "-- Select airport --");
         airportSelect.disabled = false;
       });
   });
@@ -53,13 +50,7 @@ document.addEventListener("DOMContentLoaded", function () {
     fetch(`/ajax/dest_countries/?origin_country=${encodeURIComponent(origin_country)}&origin_city=${encodeURIComponent(city)}`)
       .then(res => res.json())
       .then(data => {
-        destSelect.innerHTML = '<option value="">-- Select country --</option>';
-        data.forEach(c => {
-          const opt = document.createElement("option");
-          opt.value = c;
-          opt.textContent = c;
-          destSelect.appendChild(opt);
-        });
+        populateSelect("dest_country", data, "-- Select country --");
         destSelect.disabled = false;
       });
   });
@@ -76,13 +67,7 @@ document.addEventListener("DOMContentLoaded", function () {
     fetch(`/ajax/dest_airports/?origin_country=${encodeURIComponent(origin_country)}&origin_city=${encodeURIComponent(origin_city)}&dest_country=${encodeURIComponent(dest_country)}`)
       .then(res => res.json())
       .then(data => {
-        airportSelect.innerHTML = '<option value="">-- Select airport --</option>';
-        data.forEach(a => {
-          const opt = document.createElement("option");
-          opt.value = a;
-          opt.textContent = a;
-          airportSelect.appendChild(opt);
-        });
+        populateSelect("dest_airport", data, "-- Select airport --");
         airportSelect.disabled = false;
       });
   });
@@ -105,15 +90,10 @@ document.addEventListener("DOMContentLoaded", function () {
   document.getElementById("trip_type").addEventListener("change", function () {
     const retDate = document.getElementById("return_date");
     const retLabel = document.getElementById("return_label");
+    const isRound = this.value === "round";
 
-    if (this.value === "round") {
-      retDate.style.display = "inline-block";
-      retLabel.style.display = "inline-block";
-    } else {
-      retDate.style.display = "none";
-      retLabel.style.display = "none";
-      retDate.value = "";
-    }
+    retDate.style.display = retLabel.style.display = isRound ? "inline-block" : "none";
+    if (!isRound) retDate.value = "";
   });
 
   document.getElementById("searchBtn").addEventListener("click", function () {

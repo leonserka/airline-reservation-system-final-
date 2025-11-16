@@ -17,7 +17,7 @@ def distinct_list(field, **filters):
 def valid_date(value):
     try:
         return datetime.strptime(value, "%Y-%m-%d").date()
-    except:
+    except (ValueError, TypeError):
         return None
 
 def home(request):

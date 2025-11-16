@@ -62,9 +62,8 @@ def book_step2(request, flight_id):
     if request.method == 'POST':
         selected_class = request.POST.get('seat_class')
         request.session['seat_class'] = selected_class
-        class_prices = {'BASIC': 0, 'REGULAR': 30, 'PLUS': 45}
-        dep_price = flight.price + class_prices.get(selected_class, 0)
-        ret_price = (return_flight.price + class_prices.get(selected_class, 0)) if return_flight else 0
+        dep_price = flight.price + {'BASIC': 0, 'REGULAR': 30, 'PLUS': 45}.get(selected_class, 0)
+        ret_price = (return_flight.price + {'BASIC': 0, 'REGULAR': 30, 'PLUS': 45}.get(selected_class, 0)) if return_flight else 0
         total_price = dep_price + ret_price
         request.session['total_price'] = float(total_price)
 
@@ -149,16 +148,11 @@ def book_step4(request, flight_id):
     total_price = request.session.get('total_price', float(flight.price))
 
     if request.method == 'POST':
-        luggage_prices = {'10kg': 20, '20kg': 30, '23kg': 40}
-        equipment_prices = {'sports': 40, 'music': 50, 'baby': 10}
         selected_luggage = request.POST.get('luggage_option')
         selected_equipment = request.POST.get('equipment_option')
 
-        extra_cost = 0
-        if selected_luggage in luggage_prices:
-            extra_cost += luggage_prices[selected_luggage]
-        if selected_equipment in equipment_prices:
-            extra_cost += equipment_prices[selected_equipment]
+        extra_cost = ({'10kg': 20, '20kg': 30, '23kg': 40}.get(selected_luggage, 0) + 
+                      {'sports': 40, 'music': 50, 'baby': 10}.get(selected_equipment, 0))
         request.session['selected_luggage'] = selected_luggage
         request.session['selected_equipment'] = selected_equipment
         request.session['extra_cost'] = extra_cost
@@ -244,8 +238,7 @@ def book_step5(request, flight_id):
     email.attach("receipt.pdf", pdf_buffer.getvalue(), "application/pdf")
     email.send(fail_silently=False)
 
-    for key in ['ticket_ids', 'passengers', 'num_passengers', 'selected_seats',
-                'seat_class', 'total_price', 'return_id']:
+    for key in ['ticket_ids', 'passengers', 'num_passengers', 'selected_seats', 'seat_class', 'total_price', 'return_id']:
         request.session.pop(key, None)
 
     return JsonResponse({'status': 'ok'})
@@ -253,7 +246,6 @@ def book_step5(request, flight_id):
 @login_required
 def book_success(request):
     tickets = Ticket.objects.filter(purchased_by=request.user).order_by('-id')[:10]
-    for key in ['ticket_ids', 'passengers', 'num_passengers', 'selected_seats',
-                'seat_class', 'total_price', 'return_id']:
+    for key in ['ticket_ids', 'passengers', 'num_passengers', 'selected_seats', 'seat_class', 'total_price', 'return_id']:
         request.session.pop(key, None)
     return render(request, 'flights/book_success.html', {'tickets': tickets})

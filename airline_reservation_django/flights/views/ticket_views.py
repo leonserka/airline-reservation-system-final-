@@ -28,10 +28,10 @@ def about_ticket(request, ticket_id):
 
     if request.GET.get('download') == 'pdf': 
         pdf_buffer = generate_ticket_pdf(ticket) 
-        return HttpResponse( pdf_buffer.getvalue(), content_type="application/pdf", 
-                            headers={ "Content-Disposition": f'attachment; filename="ticket_{ticket.id}.pdf"' } ) 
+        return HttpResponse(
+            pdf_buffer.getvalue(),
+            content_type="application/pdf",
+            headers={"Content-Disposition": f'attachment; filename="ticket_{ticket.id}.pdf"'}
+        ) 
     
-    return render(request, 'flights/about_ticket.html', { 
-        'ticket': ticket, 
-        'can_cancel': can_cancel 
-        })
+    return render(request, 'flights/about_ticket.html', {'ticket': ticket, 'can_cancel': can_cancel})
