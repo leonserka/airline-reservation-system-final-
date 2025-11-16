@@ -3,26 +3,20 @@ from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
 from ..models import Flight, Ticket
-from ..forms import PassengerForm, TicketForm
+from ..forms import PassengerForm
 import json
 from django.conf import settings
 from django.core.mail import EmailMessage
 
-@login_required
-def book_flight(request, flight_id):
-    flight = get_object_or_404(Flight, id=flight_id)
-    if request.method == 'POST':
-        form = TicketForm(request.POST)
-        if form.is_valid():
-            ticket = form.save(commit=False)
-            ticket.flight = flight
-            ticket.price_paid = flight.price
-            ticket.save()
-            return redirect('flight_list')
-    else:
-        form = TicketForm()
-    return render(request, 'flights/book_flight.html', {'form': form, 'flight': flight})
-
+def load_booking_context(request, flight_id):
+    flight = get_object_or_404(Flight, id=flight_id) 
+    
+    return_id = request.session.get("return_id") 
+    return_flight = Flight.objects.filter(id=return_id).first() if return_id else None 
+    total_price = float(request.session.get("total_price", flight.price)) 
+    num_passengers = int(request.session.get("num_passengers", 1)) 
+    
+    return flight, return_flight, total_price, num_passengers
 @login_required
 def book_step1(request, flight_id):
     flight = get_object_or_404(Flight, id=flight_id)
@@ -263,12 +257,3 @@ def book_success(request):
                 'seat_class', 'total_price', 'return_id']:
         request.session.pop(key, None)
     return render(request, 'flights/book_success.html', {'tickets': tickets})
-
-@csrf_exempt
-def save_seat(request):
-    if request.method == 'POST':
-        data = json.loads(request.body)
-        selected_seat = data.get('selected_seat')
-        request.session['selected_seat'] = selected_seat
-        return JsonResponse({'status': 'success', 'selected_seat': selected_seat})
-    return JsonResponse({'status': 'failed'})

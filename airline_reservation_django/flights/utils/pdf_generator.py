@@ -11,34 +11,27 @@ import base64
 import os
 
 def generate_ticket_pdf(ticket):
-
     qr_data = f"TICKET-{ticket.id}-{ticket.passenger_name}-{ticket.flight.id}"
-
     qr = qrcode.QRCode(version=1, box_size=10, border=2)
     qr.add_data(qr_data)
     qr.make(fit=True)
-
     img = qr.make_image(fill_color="black", back_color="white")
     buffer_qr = BytesIO()
     img.save(buffer_qr, format="PNG")
     qr_base64 = base64.b64encode(buffer_qr.getvalue()).decode("utf-8")
-
     html_string = render_to_string(
         "flights/ticket_pdf_template.html",
         {"ticket": ticket, "qr_base64": qr_base64}
     )
 
     pdf_file = BytesIO()
-
     css_path = os.path.abspath(
         os.path.join(os.path.dirname(__file__), "..", "static", "flights", "ticket_pdf.css")
     )
 
-    HTML(string=html_string).write_pdf(
-        pdf_file,
-        stylesheets=[CSS(css_path)]
-    )
-
+    html = HTML(string=html_string)
+    pdf_bytes = html.write_pdf(stylesheets=[CSS(css_path)])
+    pdf_file.write(pdf_bytes)
     pdf_file.seek(0)
     return pdf_file
 
@@ -138,7 +131,6 @@ def generate_receipt_pdf(flight, passengers, seat_class, user):
             ParagraphStyle("thanks", fontSize=10, alignment=1),
         )
     )
-
     doc.build(elems)
     buffer.seek(0)
     return buffer, total_sum

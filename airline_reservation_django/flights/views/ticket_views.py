@@ -21,18 +21,17 @@ def cancel_booked_flight(request, ticket_id):
         return redirect('check_booked_flights')
     return render(request, 'flights/error.html', {'message': 'You can only cancel PLUS class tickets.'})
 
-@login_required
-def about_ticket(request, ticket_id):
-    ticket = get_object_or_404(Ticket, id=ticket_id, purchased_by=request.user)
-    can_cancel = ticket.seat_class == "PLUS"
+@login_required 
+def about_ticket(request, ticket_id): 
+    ticket = get_object_or_404(Ticket, id=ticket_id, purchased_by=request.user) 
+    can_cancel = ticket.seat_class == "PLUS" 
 
-    if request.GET.get('download') == 'pdf':
-        buffer = generate_ticket_pdf(ticket)
-        response = HttpResponse(buffer, content_type='application/pdf')
-        response['Content-Disposition'] = f'attachment; filename="ticket_{ticket.id}.pdf"'
-        return response
-
-    return render(request, 'flights/about_ticket.html', {
-        'ticket': ticket,
-        'can_cancel': can_cancel
-    })
+    if request.GET.get('download') == 'pdf': 
+        pdf_buffer = generate_ticket_pdf(ticket) 
+        return HttpResponse( pdf_buffer.getvalue(), content_type="application/pdf", 
+                            headers={ "Content-Disposition": f'attachment; filename="ticket_{ticket.id}.pdf"' } ) 
+    
+    return render(request, 'flights/about_ticket.html', { 
+        'ticket': ticket, 
+        'can_cancel': can_cancel 
+        })

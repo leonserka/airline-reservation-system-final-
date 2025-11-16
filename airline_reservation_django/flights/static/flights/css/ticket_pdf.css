@@ -31,6 +31,10 @@ body {
     margin-bottom: 3px;
 }
 
+.to-section {
+    margin-top: 15px;
+}
+
 .big {
     font-size: 22px;
     font-weight: bold;
@@ -65,6 +69,11 @@ body {
     align-items: center;
     justify-content: center;
     padding: 15px;
+}
+
+.plane-icon {
+    font-size: 32px;
+    margin-bottom: 10px;
 }
 
 .qr-code {

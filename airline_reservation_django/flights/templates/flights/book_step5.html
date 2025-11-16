@@ -21,7 +21,7 @@
 
 <div id="paypal-button-container" style="max-width: 400px; margin-top: 20px;"></div>
 
-<link rel="stylesheet" href="{% static 'flights/book_step5.css' %}">
+<link rel="stylesheet" href="{% static 'flights/css/book_step5.css' %}">
 
 <script src="https://www.paypal.com/sdk/js?client-id={{ PAYPAL_CLIENT_ID }}&currency=EUR"></script>
 
@@ -31,6 +31,6 @@
   const BOOK_SUCCESS_URL = "{% url 'book_success' %}";
 </script>
 
-<script src="{% static 'flights/book_step5.js' %}"></script>
+<script src="{% static 'flights/js/book_step5.js' %}"></script>
 
 {% endblock %}

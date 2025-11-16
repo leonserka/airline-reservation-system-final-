@@ -6,14 +6,15 @@
     <meta charset="UTF-8">
     <title>Airline Reservation System</title>
 
-    <link rel="stylesheet" href="{% static 'flights/login_dropdown.css' %}">
+    <link rel="stylesheet" href="{% static 'flights/css/login_dropdown.css' %}">
+    <link rel="stylesheet" href="{% static 'flights/css/home_carousel.css' %}">
 </head>
 <body>
 
 <header class="ca-header">
 
     <div class="ca-left">
-        <span class="brand-text">AIRLINE RESERVATION</span>
+        <a href="{% url 'home' %}" class="brand-text">AIRLINE RESERVATION</a>
     </div>
 
     <div class="ca-right">
@@ -39,6 +40,51 @@
     </div>
 
 </header>
+
+<div class="home-carousel">
+
+    <div class="slide active" style="background-image: url('{% static "flights/img/promo1.jpg" %}')">
+        <div class="caption">
+            <h1>Split → Barcelona from 60 €</h1>
+            <a href="#" class="more">Find out more</a>
+        </div>
+    </div>
+
+    <div class="slide" style="background-image: url('{% static "flights/img/promo2.jpg" %}')">
+        <div class="caption">
+            <h1>Zagreb → Lisabon from 100 €</h1>
+            <a href="#" class="more">Find out more</a>
+        </div>
+    </div>
+
+    <div class="slide" style="background-image: url('{% static "flights/img/promo3.jpg" %}')">
+        <div class="caption">
+            <h1>Dubrovnik → Rim from 75 €</h1>
+            <a href="#" class="more">Find out more</a>
+        </div>
+    </div>
+
+    <div class="slide" style="background-image: url('{% static "flights/img/promo4.jpg" %}')">
+        <div class="caption">
+            <h1>Split → Helsinki from 110 €</h1>
+            <a href="#" class="more">Find out more</a>
+        </div>
+    </div>
+
+    <div class="slide" style="background-image: url('{% static "flights/img/promo5.jpg" %}')">
+        <div class="caption">
+            <h1>Zagreb → Split from 45 €</h1>
+            <a href="#" class="more">Find out more</a>
+        </div>
+    </div>
+
+    <div class="carousel-arrow left" id="prevSlide">❮</div>
+    <div class="carousel-arrow right" id="nextSlide">❯</div>
+
+</div>
+
+
+<script src="{% static 'flights/js/home_carousel.js' %}"></script>
 
 
 {% if not user.is_authenticated %}
@@ -67,6 +113,7 @@
 </div>
 {% endif %}
 
+
 <main style="padding: 40px;">
 
     <h1>Welcome to the Airline Reservation System!</h1>
@@ -80,14 +127,15 @@
             <a href="{% url 'check_booked_flights' %}">Check Booked Flights</a>
         {% endif %}
         <br><br>
-        <a href="{% url 'logout' %}">Logout</a>
 
     {% else %}
         <p>Dobrodošli! Prijavite se za nastavak.</p>
     {% endif %}
 
 </main>
-<script src="{% static 'flights/login_dropdown.js' %}"></script>
+
+
+<script src="{% static 'flights/js/login_dropdown.js' %}"></script>
 
 </body>
 </html>
