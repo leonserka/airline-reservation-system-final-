@@ -70,3 +70,85 @@
     background: #003366;
     border-radius: 2px;
 }
+
+.hidden {
+    display: none !important;
+}
+
+.login-dropdown {
+    position: absolute;
+    right: 20px;
+    top: 90px;
+    width: 300px;
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0px 4px 25px rgba(0,0,0,0.2);
+    z-index: 1000;
+}
+
+.dropdown-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+    font-weight: bold;
+    font-size: 18px;
+}
+
+.close-btn {
+    background: none;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+}
+
+.login-dropdown label {
+    display: block;
+    margin-top: 10px;
+    font-size: 14px;
+    color: #003366;
+}
+
+.login-dropdown input {
+    width: 100%;
+    padding: 8px 5px;
+    margin-top: 3px;
+    border: none;
+    border-bottom: 2px solid #ccc;
+    outline: none;
+}
+
+.login-dropdown input:focus {
+    border-bottom-color: #007bff;
+}
+
+.login-submit {
+    width: 100%;
+    margin-top: 15px;
+    padding: 10px;
+    background: #d62929;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.login-submit:hover {
+    background: #b52020;
+}
+
+.links {
+    margin-top: 10px;
+    font-size: 14px;
+}
+
+.links a {
+    color: #003366;
+    text-decoration: none;
+}
+
+.links a:hover {
+    text-decoration: underline;
+}
