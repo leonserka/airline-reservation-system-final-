@@ -4,7 +4,6 @@ ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 
 RUN apt-get update && apt-get install -y \
-    netcat-traditional \
     libcairo2 \
     libpango-1.0-0 \
     libpangocairo-1.0-0 \
@@ -18,7 +17,6 @@ RUN apt-get update && apt-get install -y \
     fonts-liberation \
     libjpeg62-turbo \
     zlib1g \
-    libthai-data \
     libharfbuzz0b \
     libfribidi0 \
     && apt-get clean

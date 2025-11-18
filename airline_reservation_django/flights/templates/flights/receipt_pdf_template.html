@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Receipt</title>
+    <link rel="stylesheet" href="receipt_pdf.css">
+</head>
+
+<body>
+
+<div class="box">
+    <h1>FLIGHT RECEIPT</h1>
+
+    <p><b>Order number:</b> {{ order_number }}</p>
+    <p><b>Date:</b> {{ date_today }}</p>
+
+    <hr>
+
+    <h2>Customer</h2>
+    <p><b>Name:</b> {{ user.get_full_name|default:user.username }}</p>
+    <p><b>Email:</b> {{ user.email }}</p>
+
+    <hr>
+
+    <h2>Flight Details</h2>
+    <p><b>Route:</b> {{ flight.departure_city }} → {{ flight.arrival_city }}</p>
+    <p><b>Date:</b> {{ flight.date }}</p>
+    <p><b>Class:</b> {{ seat_class }}</p>
+
+    <hr>
+
+    <h2>Payment Overview</h2>
+
+    <table class="tbl">
+        <tr>
+            <th>Passenger</th>
+            <th>Price</th>
+            <th>Tax</th>
+            <th>Total</th>
+        </tr>
+
+        {% for p in passengers %}
+        <tr>
+            <td>{{ p.name }}</td>
+            <td>{{ p.base }} €</td>
+            <td>{{ p.tax }} €</td>
+            <td>{{ p.total }} €</td>
+        </tr>
+        {% endfor %}
+
+        <tr class="final">
+            <td colspan="3"><b>Total:</b></td>
+            <td><b>{{ total_sum }} €</b></td>
+        </tr>
+    </table>
+
+    <p class="thanks">Thank you for choosing our airline.</p>
+</div>
+
+</body>
+</html>

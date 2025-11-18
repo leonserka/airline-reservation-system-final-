@@ -1,259 +1,225 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
-from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
-from ..models import Flight, Ticket
-from ..forms import PassengerForm
-import json
 from django.conf import settings
 from django.core.mail import EmailMessage
+from ..models import Flight, Ticket
+from ..forms import PassengerForm
+from ..utils.pdf_generator import generate_receipt_pdf
+import json
 
-def load_booking_context(request, flight_id):
-    flight = get_object_or_404(Flight, id=flight_id) 
-    
-    return_id = request.session.get("return_id") 
-    return_flight = Flight.objects.filter(id=return_id).first() if return_id else None 
-    total_price = float(request.session.get("total_price", flight.price)) 
-    num_passengers = int(request.session.get("num_passengers", 1)) 
-    
-    return flight, return_flight, total_price, num_passengers
+def get_return_flight(request):
+    rid = request.session.get("return_id")
+    return Flight.objects.filter(id=rid).first() if rid else None
+
+def set_session(request, **kv):
+    for k, v in kv.items():
+        request.session[k] = v
+
+def clear_session(request, keys):
+    for k in keys:
+        request.session.pop(k, None)
+
+SEAT_PRICES = {'BASIC': 0, 'REGULAR': 30, 'PLUS': 45}
+LUGGAGE = {'10kg': 20, '20kg': 30, '23kg': 40}
+EQUIPMENT = {'sports': 40, 'music': 50, 'baby': 10}
+
 @login_required
 def book_step1(request, flight_id):
     flight = get_object_or_404(Flight, id=flight_id)
 
-    return_id = request.GET.get("return_id")
-    if return_id:
-        request.session["return_id"] = return_id  
+    if request.GET.get("return_id"):
+        set_session(request, return_id=request.GET.get("return_id"))
+
+    num_pass = int(request.GET.get("pax", request.session.get("num_passengers", 1)))
+    return_flight = get_return_flight(request)
+
+    if request.method == "POST":
+        forms = [PassengerForm(request.POST, prefix=str(i)) for i in range(num_pass)]
+        if all(f.is_valid() for f in forms):
+            set_session(
+                request,
+                passengers=[f.cleaned_data for f in forms],
+                num_passengers=num_pass,
+                departure_id=flight.id,
+            )
+            return redirect("book_step2", flight_id=flight.id)
     else:
-        return_id = request.session.get("return_id")
+        forms = [PassengerForm(prefix=str(i)) for i in range(num_pass)]
 
-    return_flight = None
-    if return_id:
-        try:
-            return_flight = Flight.objects.get(id=return_id)
-        except Flight.DoesNotExist:
-            request.session.pop("return_id", None)
-    num_passengers = int(request.GET.get("pax", request.session.get("num_passengers", 1)))
-
-    if request.method == 'POST':
-        passenger_forms = [PassengerForm(request.POST, prefix=str(i)) for i in range(num_passengers)]
-        if all(form.is_valid() for form in passenger_forms):
-            passengers = [form.cleaned_data for form in passenger_forms]
-            request.session['passengers'] = passengers
-            request.session['num_passengers'] = num_passengers
-            request.session['departure_id'] = flight.id
-            return redirect('book_step2', flight_id=flight.id)
-    else:
-        passenger_forms = [PassengerForm(prefix=str(i)) for i in range(num_passengers)]
-
-    return render(request, 'flights/book_step1.html', {
-        'flight': flight,
-        'return_flight': return_flight,  
-        'passenger_forms': passenger_forms,
-        'num_passengers': num_passengers
+    return render(request, "flights/book_step1.html", {
+        "flight": flight,
+        "return_flight": return_flight,
+        "passenger_forms": forms,
+        "num_passengers": num_pass,
     })
 
 @login_required
 def book_step2(request, flight_id):
     flight = get_object_or_404(Flight, id=flight_id)
-    return_id = request.session.get('return_id')
-    return_flight = Flight.objects.filter(id=return_id).first() if return_id else None
+    return_flight = get_return_flight(request)
 
-    if request.method == 'POST':
-        selected_class = request.POST.get('seat_class')
-        request.session['seat_class'] = selected_class
-        class_prices = {'BASIC': 0, 'REGULAR': 30, 'PLUS': 45}
-        dep_price = flight.price + class_prices.get(selected_class, 0)
-        ret_price = (return_flight.price + class_prices.get(selected_class, 0)) if return_flight else 0
-        total_price = dep_price + ret_price
-        request.session['total_price'] = float(total_price)
+    if request.method == "POST":
+        seat_class = request.POST.get("seat_class")
+        set_session(request, seat_class=seat_class)
 
-        return redirect('book_step3', flight_id=flight.id)
+        dep = flight.price + SEAT_PRICES.get(seat_class, 0)
+        ret = (return_flight.price + SEAT_PRICES.get(seat_class, 0)) if return_flight else 0
 
-    seat_options = [
-        {'name': 'BASIC', 'price': 0},
-        {'name': 'REGULAR', 'price': 30},
-        {'name': 'PLUS', 'price': 45}
-    ]
+        set_session(request, total_price=float(dep + ret))
+        return redirect("book_step3", flight_id=flight.id)
 
-    return render(request, 'flights/book_step2.html', {
-        'flight': flight,
-        'return_flight': return_flight,
-        'seat_options': seat_options,
-        'total_price': flight.price
+    seat_options = [{"name": k, "price": v} for k, v in SEAT_PRICES.items()]
+
+    return render(request, "flights/book_step2.html", {
+        "flight": flight,
+        "return_flight": return_flight,
+        "seat_options": seat_options,
+        "total_price": flight.price,
     })
 
 @login_required
 def book_step3(request, flight_id):
     flight = get_object_or_404(Flight, id=flight_id)
-    return_id = request.session.get('return_id')
-    return_flight = Flight.objects.filter(id=return_id).first() if return_id else None
-    departure_id = request.session.get("departure_id", flight_id)
-    num_passengers = request.session.get('num_passengers', 1)
-    all_selected = request.session.get('selected_seats', {})
-    taken_seats = list(flight.ticket_set.values_list('seat_number', flat=True))
-    selected_seats = all_selected.get(str(flight_id), [])
-
+    return_flight = get_return_flight(request)
+    num_pass = request.session.get("num_passengers", 1)
+    all_selected = request.session.get("selected_seats", {})
+    taken = list(flight.ticket_set.values_list("seat_number", flat=True))
+    selected = all_selected.get(str(flight_id), [])
     seat_positions = []
-    for row in range(1, 18):
-        row_seats = {'left': [], 'right': []}
-        for seat in range(1, 5):
-            seat_id = (row - 1) * 4 + seat
-            top = 105 + (row - 1) * 25.1
-            if seat <= 2:
-                left = 150 + (seat - 1) * 23
-                row_seats['left'].append({
-                    'seat_id': seat_id,
-                    'top': top,
-                    'left': left,
-                    'occupied': str(seat_id) in taken_seats or str(seat_id) in selected_seats
-                })
-            else:
-                right = 150 + (seat - 3) * 23
-                row_seats['right'].append({
-                    'seat_id': seat_id,
-                    'top': top,
-                    'left': right,
-                    'occupied': str(seat_id) in taken_seats or str(seat_id) in selected_seats
-                })
-        seat_positions.append(row_seats)
+    for r in range(1, 18):
+        row = {"left": [], "right": []}
+        for s in range(1, 5):
+            seat_id = (r - 1) * 4 + s
+            pos = {
+                "seat_id": seat_id,
+                "top": 105 + (r - 1) * 25.1,
+                "left": 150 + ((s - 1) % 2) * 23,
+                "occupied": str(seat_id) in taken or str(seat_id) in selected,
+            }
+            (row["left"] if s <= 2 else row["right"]).append(pos)
+        seat_positions.append(row)
 
-    if request.method == 'POST':
-        selected_seat = request.POST.get('selected_seat')
+    if request.method == "POST":
+        pick = request.POST.get("selected_seat")
+        if pick and pick not in selected:
+            selected.append(pick)
+            all_selected[str(flight_id)] = selected
+            set_session(request, selected_seats=all_selected)
 
-        if selected_seat and selected_seat not in selected_seats:
-            selected_seats.append(selected_seat)
-            all_selected[str(flight_id)] = selected_seats
-            request.session['selected_seats'] = all_selected
-        if len(selected_seats) >= num_passengers:
+        if len(selected) >= num_pass:
             if return_flight and str(return_flight.id) not in all_selected:
-                return redirect('book_step3', flight_id=return_flight.id)
-            
-            return redirect('book_step4', flight_id=departure_id)
+                return redirect("book_step3", flight_id=return_flight.id)
+            return redirect("book_step4", flight_id=request.session.get("departure_id", flight_id))
 
-    total_price = request.session.get('total_price', float(flight.price))
-
-    return render(request, 'flights/book_step3.html', {
-        'flight': flight,
-        'return_flight': return_flight,        
-        'seat_positions': seat_positions,
-        'selected_seats': selected_seats,
-        'num_passengers': num_passengers,
-        'remaining': num_passengers - len(selected_seats),
-        'total_price': total_price
+    return render(request, "flights/book_step3.html", {
+        "flight": flight,
+        "return_flight": return_flight,
+        "seat_positions": seat_positions,
+        "selected_seats": selected,
+        "num_passengers": num_pass,
+        "remaining": num_pass - len(selected),
+        "total_price": request.session.get("total_price", float(flight.price)),
     })
 
 @login_required
 def book_step4(request, flight_id):
     flight = get_object_or_404(Flight, id=flight_id)
-    total_price = request.session.get('total_price', float(flight.price))
+    total = request.session.get("total_price", float(flight.price))
 
-    if request.method == 'POST':
-        luggage_prices = {'10kg': 20, '20kg': 30, '23kg': 40}
-        equipment_prices = {'sports': 40, 'music': 50, 'baby': 10}
-        selected_luggage = request.POST.get('luggage_option')
-        selected_equipment = request.POST.get('equipment_option')
+    if request.method == "POST":
+        lug = request.POST.get("luggage_option")
+        eq = request.POST.get("equipment_option")
+        extra = LUGGAGE.get(lug, 0) + EQUIPMENT.get(eq, 0)
 
-        extra_cost = 0
-        if selected_luggage in luggage_prices:
-            extra_cost += luggage_prices[selected_luggage]
-        if selected_equipment in equipment_prices:
-            extra_cost += equipment_prices[selected_equipment]
-        request.session['selected_luggage'] = selected_luggage
-        request.session['selected_equipment'] = selected_equipment
-        request.session['extra_cost'] = extra_cost
-        request.session['total_price'] = total_price + extra_cost
+        set_session(
+            request,
+            selected_luggage=lug,
+            selected_equipment=eq,
+            extra_cost=extra,
+            total_price=total + extra,
+        )
 
-        return redirect('book_step5', flight_id=flight_id)
+        return redirect("book_step5", flight_id=flight_id)
 
-    return render(request, 'flights/book_step4.html', {'flight': flight, 'total_price': total_price})
-
+    return render(request, "flights/book_step4.html", {
+        "flight": flight,
+        "total_price": total,
+    })
 
 @login_required
 def book_step5(request, flight_id):
     flight = get_object_or_404(Flight, id=flight_id)
-    return_id = request.session.get('return_id')
-    return_flight = Flight.objects.filter(id=return_id).first() if return_id else None
+    return_flight = get_return_flight(request)
+    passengers = request.session.get("passengers", [])
+    num_pass = request.session.get("num_passengers", 1)
+    seat_class = request.session.get("seat_class")
+    all_selected = request.session.get("selected_seats", {})
+    lug = request.session.get("selected_luggage")
+    eq = request.session.get("selected_equipment")
+    total_price = float(request.session.get("total_price", flight.price)) * num_pass
 
-    passengers = request.session.get('passengers', [])
-    num_passengers = request.session.get('num_passengers', 1)
-    seat_class = request.session.get('seat_class')
-    all_selected = request.session.get('selected_seats', {})
-    extra_luggage = request.session.get('selected_luggage')
-    extra_equipment = request.session.get('selected_equipment')
-    total_price = float(request.session.get('total_price', flight.price)) * num_passengers
-
-    if request.method == 'GET':
-        return render(request, 'flights/book_step5.html', {
-            'flight': flight,
-            'return_flight': return_flight,
-            'total_price': total_price,
-            'num_passengers': num_passengers,
-            'extra_luggage': extra_luggage,
-            'extra_equipment': extra_equipment,
-            'PAYPAL_CLIENT_ID': getattr(settings, 'PAYPAL_CLIENT_ID', ''),
+    if request.method == "GET":
+        return render(request, "flights/book_step5.html", {
+            "flight": flight,
+            "return_flight": return_flight,
+            "total_price": total_price,
+            "num_passengers": num_pass,
+            "extra_luggage": lug,
+            "extra_equipment": eq,
+            "PAYPAL_CLIENT_ID": getattr(settings, "PAYPAL_CLIENT_ID", ""),
         })
 
     try:
         json.loads(request.body)
-    except Exception:
-        return JsonResponse({'status': 'error', 'msg': 'Invalid JSON'})
+    except:
+        return JsonResponse({"status": "error", "msg": "Invalid JSON"})
 
     for i, pax in enumerate(passengers):
         for fl in filter(None, [flight, return_flight]):
             seat_list = all_selected.get(str(fl.id), [])
-            seat_number = seat_list[i] if i < len(seat_list) else None
             Ticket.objects.create(
                 flight=fl,
-                passenger_name=pax.get('passenger_name'),
-                passenger_surname=pax.get('passenger_surname'),
-                id_number=pax.get('id_number'),
-                email=pax.get('email'),
-                phone_number=pax.get('phone_number'),
+                passenger_name=pax["passenger_name"],
+                passenger_surname=pax["passenger_surname"],
+                id_number=pax["id_number"],
+                email=pax["email"],
+                phone_number=pax["phone_number"],
+                country_code=pax["country_code"],
                 seat_class=seat_class,
-                seat_number=seat_number,
-                country_code=pax.get('country_code'),
+                seat_number=seat_list[i] if i < len(seat_list) else None,
                 price_paid=fl.price,
-                payment_method='PayPal',
-                extra_luggage=extra_luggage,
-                extra_equipment=extra_equipment,
+                extra_luggage=lug,
+                extra_equipment=eq,
+                payment_method="PayPal",
                 purchased_by=request.user,
             )
-            fl.available_seats = max(0, fl.available_seats - 1)
+            fl.available_seats -= 1
             fl.save()
 
-    from ..utils.pdf_generator import generate_receipt_pdf
     pdf_buffer, total_sum = generate_receipt_pdf(flight, passengers, seat_class, request.user)
 
     email = EmailMessage(
-        subject="✅ Airline Ticket Confirmation & Receipt",
-        body=(
-            f"Dear {request.user.first_name or 'Customer'},\n\n"
-            f"Thank you for your purchase!\n\n"
-            f"Flight: {flight.departure_city} → {flight.arrival_city}\n"
-            f"Date: {flight.date}\n"
-            f"Passengers: {num_passengers}\n"
-            f"Total Paid: €{total_sum:.2f}\n\n"
-            f"Your receipt is attached.\n\n"
-            f"Have a safe flight! ✈️\n"
-            f"— Airline Reservation Team"
-        ),
-        from_email="Airline Reservation <no-reply@airline.com>",
+        subject="Your Airline Receipt",
+        body=f"Thank you! Total paid: €{total_sum:.2f}",
+        from_email="Airline <no-reply@airline.com>",
         to=[request.user.email],
     )
     email.attach("receipt.pdf", pdf_buffer.getvalue(), "application/pdf")
-    email.send(fail_silently=False)
+    email.send()
 
-    for key in ['ticket_ids', 'passengers', 'num_passengers', 'selected_seats',
-                'seat_class', 'total_price', 'return_id']:
-        request.session.pop(key, None)
+    clear_session(request, [
+        "ticket_ids", "passengers", "num_passengers",
+        "selected_seats", "seat_class", "total_price", "return_id"
+    ])
 
-    return JsonResponse({'status': 'ok'})
+    return JsonResponse({"status": "ok"})
 
 @login_required
 def book_success(request):
-    tickets = Ticket.objects.filter(purchased_by=request.user).order_by('-id')[:10]
-    for key in ['ticket_ids', 'passengers', 'num_passengers', 'selected_seats',
-                'seat_class', 'total_price', 'return_id']:
-        request.session.pop(key, None)
-    return render(request, 'flights/book_success.html', {'tickets': tickets})
+    tickets = Ticket.objects.filter(purchased_by=request.user).order_by("-id")[:10]
+    clear_session(request, [
+        "ticket_ids", "passengers", "num_passengers",
+        "selected_seats", "seat_class", "total_price", "return_id"
+    ])
+    return render(request, "flights/book_success.html", {"tickets": tickets})

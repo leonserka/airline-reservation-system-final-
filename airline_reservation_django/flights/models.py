@@ -1,15 +1,17 @@
 from django.db import models
 
+
 FLIGHT_TYPE_CHOICES = [
     ('DOM', 'Domestic'),
-    ('INT', 'International')
+    ('INT', 'International'),
 ]
 
 CLASS_CHOICES = [
     ('BASIC', 'Basic'),
     ('REGULAR', 'Regular'),
-    ('PLUS', 'Plus')
+    ('PLUS', 'Plus'),
 ]
+
 
 class Flight(models.Model):
     flight_number = models.CharField(max_length=10)
@@ -28,8 +30,8 @@ class Flight(models.Model):
     def __str__(self):
         return f"{self.flight_number} | {self.departure_city} → {self.arrival_city} | {self.date}"
 
+
 class Ticket(models.Model):
-    
     PAYMENT_STATUS_CHOICES = [
         ('paid', 'Paid'),
         ('refunded', 'Refunded'),
@@ -40,7 +42,7 @@ class Ticket(models.Model):
         ('canceled', 'Canceled'),
     ]
 
-    flight = models.ForeignKey('Flight', on_delete=models.CASCADE)
+    flight = models.ForeignKey(Flight, on_delete=models.CASCADE)
     passenger_name = models.CharField(max_length=50)
     passenger_surname = models.CharField(max_length=50)
     id_number = models.CharField(max_length=11)
@@ -50,19 +52,29 @@ class Ticket(models.Model):
     seat_class = models.CharField(max_length=10, choices=CLASS_CHOICES)
     seat_number = models.CharField(max_length=5, blank=True, null=True)
     price_paid = models.DecimalField(max_digits=8, decimal_places=2)
-    payment_method = models.CharField(max_length=20)    
+    payment_method = models.CharField(max_length=20)
     extra_luggage = models.CharField(max_length=30, blank=True, null=True)
     extra_equipment = models.CharField(max_length=50, blank=True, null=True)
-    purchased_by = models.ForeignKey('auth.User', on_delete=models.CASCADE, null=True, blank=True, related_name='tickets')
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    purchased_by = models.ForeignKey(
+        'auth.User',
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        related_name='tickets'
+    )
+
     payment_status = models.CharField(
         max_length=10,
         choices=PAYMENT_STATUS_CHOICES,
-        default='paid',  
+        default='paid',
     )
+
     status = models.CharField(
         max_length=10,
         choices=STATUS_CHOICES,
-        default='booked',  
+        default='booked',
     )
 
     def __str__(self):

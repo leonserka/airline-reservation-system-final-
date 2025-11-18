@@ -1,16 +1,17 @@
 from django import forms
-from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.models import User
 from .models import Flight, Ticket
 from .country_codes import COUNTRY_CODES
 from .choices import COUNTRY_CHOICES
 
+
 class FlightForm(forms.ModelForm):
     departure_country = forms.ChoiceField(
-        choices=COUNTRY_CHOICES, required=True, label="Departure Country"
+        choices=COUNTRY_CHOICES, label="Departure Country"
     )
     arrival_country = forms.ChoiceField(
-        choices=COUNTRY_CHOICES, required=True, label="Arrival Country"
+        choices=COUNTRY_CHOICES, label="Arrival Country"
     )
 
     class Meta:
@@ -21,7 +22,7 @@ class FlightForm(forms.ModelForm):
             "arrival_country", "arrival_city",
             "date", "departure_time", "arrival_time",
             "price", "total_seats", "available_seats",
-            "flight_type"
+            "flight_type",
         ]
         widgets = {
             "date": forms.DateInput(attrs={"type": "date"}),
@@ -31,11 +32,12 @@ class FlightForm(forms.ModelForm):
 
 
 class RegisterForm(UserCreationForm):
-    email = forms.EmailField(required=True)
+    email = forms.EmailField()
 
     class Meta:
         model = User
         fields = ["username", "email", "password1", "password2"]
+
 
 class FlightSearchForm(forms.Form):
     departure_city = forms.ChoiceField(choices=[], label="Departure")
@@ -44,8 +46,17 @@ class FlightSearchForm(forms.Form):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        departures = Flight.objects.order_by().values_list("departure_city", flat=True).distinct()
-        arrivals = Flight.objects.order_by().values_list("arrival_city", flat=True).distinct()
+        departures = (
+            Flight.objects.order_by()
+            .values_list("departure_city", flat=True)
+            .distinct()
+        )
+
+        arrivals = (
+            Flight.objects.order_by()
+            .values_list("arrival_city", flat=True)
+            .distinct()
+        )
 
         self.fields["departure_city"].choices = [(c, c) for c in departures]
         self.fields["arrival_city"].choices = [(c, c) for c in arrivals]
@@ -59,13 +70,19 @@ class FlightSearchForm(forms.Form):
             for dep in departures
         }
 
+
 class TicketForm(forms.ModelForm):
     class Meta:
         model = Ticket
         fields = [
-            "passenger_name", "passenger_surname", "id_number",
-            "country_code", "phone_number", "seat_class",
-            "seat_number", "payment_method"
+            "passenger_name",
+            "passenger_surname",
+            "id_number",
+            "country_code",
+            "phone_number",
+            "seat_class",
+            "seat_number",
+            "payment_method",
         ]
 
 
@@ -75,13 +92,18 @@ class PassengerForm(forms.ModelForm):
     class Meta:
         model = Ticket
         fields = [
-            "passenger_name", "passenger_surname", "id_number",
-            "country_code", "phone_number", "email"
+            "passenger_name",
+            "passenger_surname",
+            "id_number",
+            "country_code",
+            "phone_number",
+            "email",
         ]
         widgets = {
             "id_number": forms.TextInput(attrs={"maxlength": 11}),
             "email": forms.EmailInput(),
         }
+
 
 class SeatSelectionForm(forms.ModelForm):
     class Meta:
@@ -92,11 +114,11 @@ class SeatSelectionForm(forms.ModelForm):
         self.flight = flight
         super().__init__(*args, **kwargs)
 
-        if self.flight:
-            taken_seats = self.flight.ticket_set.values_list("seat_number", flat=True)
+        if flight:
+            taken = self.flight.ticket_set.values_list("seat_number", flat=True)
             all_seats = [str(i) for i in range(1, self.flight.total_seats + 1)]
-            available_seats = [s for s in all_seats if s not in taken_seats]
+            available = [s for s in all_seats if s not in taken]
 
             self.fields["seat_number"].widget = forms.Select(
-                choices=[(s, s) for s in available_seats]
+                choices=[(s, s) for s in available]
             )

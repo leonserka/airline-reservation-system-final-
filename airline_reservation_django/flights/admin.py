@@ -11,6 +11,6 @@ class TicketAdmin(admin.ModelAdmin):
     list_display = ('passenger_name', 'passenger_surname', 'flight', 'seat_class', 'seat_number', 'price_paid')
     list_filter = ('seat_class',)
     search_fields = ('passenger_name', 'passenger_surname', 'id_number', 'email')
-
+    readonly_fields = ('created_at',)
 admin.site.register(Flight, FlightAdmin)
 admin.site.register(Ticket, TicketAdmin)
