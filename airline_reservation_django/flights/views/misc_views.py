@@ -84,17 +84,14 @@ def flight_list(request):
         "show_results": show,
     })
 
-
 def get_origin_countries(request):
     return JsonResponse(distinct_list("departure_country"), safe=False)
-
 
 def get_airports_by_country(request):
     return JsonResponse(
         distinct_list("departure_city", departure_country=request.GET.get("country")),
         safe=False,
     )
-
 
 def get_destination_countries(request):
     return JsonResponse(
@@ -104,7 +101,6 @@ def get_destination_countries(request):
         safe=False
     )
 
-
 def get_destination_airports(request):
     return JsonResponse(
         distinct_list("arrival_city",
@@ -113,7 +109,6 @@ def get_destination_airports(request):
                       arrival_country=request.GET.get("dest_country")),
         safe=False
     )
-
 
 def get_available_dates(request):
     dep = request.GET.get("departure_city")

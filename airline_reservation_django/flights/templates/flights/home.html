@@ -8,6 +8,8 @@
 
     <link rel="stylesheet" href="{% static 'flights/css/login_dropdown.css' %}">
     <link rel="stylesheet" href="{% static 'flights/css/home_carousel.css' %}">
+    <link rel="stylesheet" href="{% static 'flights/css/home_search.css' %}">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 </head>
 <body>
 
@@ -40,6 +42,12 @@
     </div>
 
 </header>
+
+{% if user.is_authenticated %}
+<script>window.isLogged = true;</script>
+{% else %}
+<script>window.isLogged = false;</script>
+{% endif %}
 
 <div class="home-carousel">
 
@@ -83,9 +91,43 @@
 
 </div>
 
-
 <script src="{% static 'flights/js/home_carousel.js' %}"></script>
 
+<div class="search-container">
+    <div class="search-box">
+
+        <div class="search-input" id="fromBox">
+            <label>From</label>
+            <input type="text" id="fromInput" placeholder="Departure" readonly>
+            <div class="dropdown-panel" id="fromDropdown"></div>
+        </div>
+
+        <div class="swap-btn" id="swapBtn">⇄</div>
+
+        <div class="search-input" id="toBox">
+            <label>To</label>
+            <input type="text" id="toInput" placeholder="Destination" readonly>
+            <div class="dropdown-panel" id="toDropdown"></div>
+        </div>
+
+        <div class="search-input small">
+            <label>Depart</label>
+            <input type="text" id="departDate" placeholder="Choose date" readonly>
+        </div>
+
+        <div class="search-input small">
+            <label>Return</label>
+            <input type="text" id="returnDate" placeholder="Choose date" readonly>
+        </div>
+
+        <div class="search-input small trip-type-box">
+            <label><input type="radio" name="tripType" value="oneway" checked> One way</label>
+            <label><input type="radio" name="tripType" value="round"> Return</label>
+        </div>
+
+        <button id="homeSearchBtn" class="search-btn">Search</button>
+    </div>
+</div>
 
 {% if not user.is_authenticated %}
 <div id="loginDropdown" class="login-dropdown hidden">
@@ -113,10 +155,7 @@
 </div>
 {% endif %}
 
-
 <main style="padding: 40px;">
-
-    <h1>Welcome to the Airline Reservation System!</h1>
 
     {% if user.is_authenticated %}
 
@@ -134,8 +173,9 @@
 
 </main>
 
-
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 <script src="{% static 'flights/js/login_dropdown.js' %}"></script>
+<script src="{% static 'flights/js/home_search.js' %}"></script>
 
 </body>
 </html>

@@ -70,7 +70,6 @@ class FlightSearchForm(forms.Form):
             for dep in departures
         }
 
-
 class TicketForm(forms.ModelForm):
     class Meta:
         model = Ticket
@@ -84,7 +83,6 @@ class TicketForm(forms.ModelForm):
             "seat_number",
             "payment_method",
         ]
-
 
 class PassengerForm(forms.ModelForm):
     country_code = forms.ChoiceField(choices=COUNTRY_CODES)
@@ -118,7 +116,6 @@ class SeatSelectionForm(forms.ModelForm):
             taken = self.flight.ticket_set.values_list("seat_number", flat=True)
             all_seats = [str(i) for i in range(1, self.flight.total_seats + 1)]
             available = [s for s in all_seats if s not in taken]
-
             self.fields["seat_number"].widget = forms.Select(
                 choices=[(s, s) for s in available]
             )

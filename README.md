@@ -16,7 +16,7 @@ The **Airline Reservation System** is a full-stack web application built with th
   4. (Optional) Add extras: Extra Luggage (10/20/23 kg) & Equipment (Sports/Music/Baby)
   5. Payment & ticket issuing
 - View all purchased tickets (**Check Booked Flights**) — shows tickets bought by the logged-in user (even for other passengers)
-- View ticket details (**About Ticket**) — includes extras and PDF ticket with Code128 barcode  
+- View ticket details (**About Ticket**) — includes extras and PDF ticket with a QR code  
 - Cancel a ticket (**Cancel Ticket**) – available only for **PLUS** class  
 - When a ticket is canceled, the seat automatically becomes available again  
 
@@ -63,8 +63,23 @@ The project includes a fully containerized environment with:
 git clone https://github.com/leonserka/airline-reservation-system-final-.git
 cd airline_reservation_django
 ```
+2️⃣ **Create .env file**
+```bash
 
-2️⃣ **Build and start all containers**
+SECRET_KEY=your_django_secret_key
+DEBUG=True
+POSTGRES_USER=airline_user
+POSTGRES_PASSWORD=airline_pass
+POSTGRES_DB=airline_db
+POSTGRES_HOST=db
+POSTGRES_PORT=5432
+NGROK_AUTHTOKEN=your_ngok_key
+NGROK_REGION=eu
+PAYPAL_CLIENT_ID=your_pp_id
+PAYPAL_SECRET=your_pp_secret
+```
+
+3️⃣ **Build and start all containers**
 ```bash
 docker-compose up --build
 ```
@@ -73,15 +88,23 @@ This will:
 - Automatically apply all Flyway migrations (`/flyway/sql/V1__initial_schema.sql`)
 - Launch the Django app on port 8000
 
-3️⃣ **Open in browser**
+4️⃣ **Open in browser**
 ```bash
 http://127.0.0.1:8000/
 ```
+or using Ngrok (external access):
+```bash
+https://unfelicitated-pneumatological-wally.ngrok-free.dev/
+```
 
-4️⃣ **Access the Django Admin Panel**
+5️⃣ **Access the Django Admin Panel**
 Access the Django Admin interface:
 ```bash
 http://127.0.0.1:8000/admin/
+```
+or with ngrok:
+```bash
+https://unfelicitated-pneumatological-wally.ngrok-free.dev/admin/
 ```
 
 Create a superuser (inside the container):
@@ -89,9 +112,12 @@ Create a superuser (inside the container):
 docker exec -it airline_django python manage.py createsuperuser
 
 ```
+6️⃣ **Database access**
+```bash
+http://localhost:5052/login?next=/browser/
+```
 
-
-5️⃣ **Stop containers**
+7️⃣ **Stop containers**
 ```bash
 docker-compose down
 
@@ -128,90 +154,106 @@ flyway/sql/V1__initial_schema.sql
 
 ```bash
 airline_reservation_django\
-├── requirements.txt                # Project dependencies
-├── README.md                       # Project documentation
-├── Dockerfile                      # Defines how the Django application is built inside a container
-├── docker-compose.yml              # Orchestrates all services (Django, PostgreSQL, and Flyway) and runs them together.
-├── .gitignore                      # Git ignore rules
-├── venv\
-├── flyway\                         # Contains database migration scripts
+├── requirements.txt                
+├── README.md                       
+├── Dockerfile                      
+├── docker-compose.yml              
+├── .gitignore                      
+├── .env                            
+├── .venv\
+├── flyway\                         
 │   └── sql\                        
-│       └── V1__initial_schema.sql  # Initial PostgreSQL schema
+│       ├── V1__initial_schema.sql  
+│       ├── V2__add_schema.sql  
+│       └── V3__add_timestamp.sql  
 │
 └── airline_reservation_django\
-    ├── manage.py                   # Django management script (runserver, migrate, etc.)
+    ├── manage.py                   
     │
-    ├── airline_project\            # Main Django project configuration
+    ├── airline_project\            
     │   ├── __init__.py
-    │   ├── settings.py             # Project settings (database, apps, middleware)
-    │   ├── urls.py                 # Root URL configuration
-    │   ├── wsgi.py                 # Root URL configuration
-    │   └── asgi.py                 # ASGI entry point (for async servers)
+    │   ├── settings.py            
+    │   ├── urls.py                
+    │   ├── wsgi.py                
+    │   └── asgi.py                 
     │
-    ├── flights\                    # Core application module
+    ├── flights\                   
     │   ├── __init__.py
-    │   ├── admin.py                # Django admin configuration for models
-    │   ├── apps.py                 # App registration
-    │   ├── country_codes.py        # Country code list for form dropdowns
-    │   ├── choices.py              # Centralized reusable choice lists
-    │   ├── forms.py                # Django forms (booking, registration, etc.)
-    │   ├── models.py               # Database models (Flight, Ticket)
-    │   ├── tests.py                # Automated tests
-    │   ├── urls.py                 # App-specific routes
+    │   ├── admin.py               
+    │   ├── apps.py                 
+    │   ├── country_codes.py        
+    │   ├── choices.py             
+    │   ├── forms.py                
+    │   ├── models.py               
+    │   ├── urls.py                
     │   │
     │   │
-    │   ├── static\                     # Static files (CSS, JS, images)
+    │   ├── static\                     
     │   │   └── flights\
-    │   │       ├── avion.png           # Airplane image used in templates
-    │   │       ├── base.css            # Global CSS styles
-    │   │       ├── flight_list.js      # Script for filtering/searching flights
-    │   │       ├── flight_step1.js     # Handles Step 1 interactions
-    │   │       ├── flight_step3.css    # Seat map styling
-    │   │       ├── flight_step3.js     # Seat selection logic
-    │   │       ├── login.css           # Styling for login page
-    │   │       ├── passenger_step1.css # Styling for passenger details (Step 1)
-    │   │       ├── search.css          # Styling for flight search UI
-    │   │       ├── search.js           # JS logic for dynamic flight search
-    │   │       └── step2.css           # Styling for seat class selection (Step 2)
+    │   │      └── css\
+    │   │       ├── base.css     
+    │   │       ├── book_step5.css     
+    │   │       ├── flight_step3.css   
+    │   │       ├── home_carousel.css    
+    │   │       ├── home_search.css    
+    │   │       ├── login_dropdown.css   
+    │   │       ├── passenger_step1.css 
+    │   │       ├── receipt_pdf.css 
+    │   │       ├── search.css      
+    │   │       ├── ticket_pdf.css  
+    │   │       └── step2.css             
+    │   │      └── img\
+    │   │       ├── avion.png  
+    │   │       ├── promo1.jpg   
+    │   │       ├── promo5.jpg 
+    │   │       ├── promo3.jpg 
+    │   │       ├── promo4.jpg         
+    │   │       └── promo5.jpg    
+    │   │      └── js\   
+    │   │       ├── book_step5.js    
+    │   │       ├── book_step3.js    
+    │   │       ├── home_carousel.js
+    │   │       ├── home_search.js
+    │   │       ├── search.js        
+    │   │       └── login_dropdown.js      
     │   │
-    │   ├── templates\                  # HTML templates for the application
+    │   ├── templates\                  
     │   │   └── flights\
-    │   │       ├── base.html           # Main layout template (navbar, footer)
-    │   │       ├── home.html           # Home page with flight search form
-    │   │       ├── flight_list.html    # Search results with available flights
-    │   │       ├── create_flight.html  # Admin page to add new flights
-    │   │       ├── book_flight.html    # Booking overview page
-    │   │       ├── book_step1.html     # Step 1: Personal information
-    │   │       ├── book_step2.html     # Step 2: Seat class selection
-    │   │       ├── book_step3.html     # Step 3: Seat map selection
-    │   │       ├── book_step4.html     # Step 4: Adding extras
-    │   │       ├── book_step5.html     # Step 5: Confirmation and payment
-    │   │       ├── book_success.html   # Success message after booking
-    │   │       ├── check_booked_flights.html   # User’s booked tickets list
-    │   │       ├── about_ticket.html   # Detailed ticket information
-    │   │       ├── cancel_success.html # Ticket cancellation confirmation
-    │   │       ├── login.html          # User login page
-    │   │       ├── password_reset.html # Form where user enters email to reset password        
-    │   │       ├── password_reset_complete.html  # Final success page after password is changed
-    │   │       ├── password_reset_confirm.html   # Page where user sets a new password (token link)
-    │   │       ├── password_reset_done.html      # Confirmation that reset email was sent
-    │   │       └── register.html       # User registration page
+    │   │       ├── base.html           
+    │   │       ├── home.html           
+    │   │       ├── flight_list.html    
+    │   │       ├── create_flight.html 
+    │   │       ├── book_step1.html     
+    │   │       ├── book_step2.html     
+    │   │       ├── book_step3.html     
+    │   │       ├── book_step4.html     
+    │   │       ├── book_step5.html     
+    │   │       ├── book_success.html   
+    │   │       ├── check_booked_flights.html   
+    │   │       ├── about_ticket.html   
+    │   │       ├── cancel_success.html 
+    │   │       ├── empty_login.html         
+    │   │       ├── password_reset.html        
+    │   │       ├── password_reset_complete.html  
+    │   │       ├── password_reset_confirm.html   
+    │   │       ├── password_reset_done.html      
+    │   │       ├──receipt_pdf_template.html
+    │   │       ├──ticket_pdf_template.html
+    │   │       └── register.html       
     │   │
-    │   ├── utils\                       # Helper utilities used across the app
-    │   │   ├── pdf_generator.py         # Generates PDF tickets with passenger and flight details (includes barcode)
+    │   ├── utils\                      
+    │   │   ├── pdf_generator.py         
     │   │   └── __init__.py
     │   │   
-    │   ├── views\                      # Split views for better code organization
-    │   │   ├── booking_views.py        # Handles flight search, multi-step booking, seat selection, and payments
-    │   │   ├── misc_views.py           # Contains home, login/logout, registration, and general-purpose views
-    │   │   ├── ticket_views.py         # Manages booked tickets, cancellations, and PDF ticket generation
+    │   ├── views\                     
+    │   │   ├── booking_views.py        
+    │   │   ├── misc_views.py           
+    │   │   ├── ticket_views.py         
     │   │   └── __init__.py
     │   │   
-    ├── staticfiles\            # Collected static files for deployment
-    │   ├── admin\              # Django admin assets (css, js, img, fonts)
-    │   └── flights\
-    │
-    └── venv\
+    ├── staticfiles\            
+        ├── admin\              
+        └── flights\
 
 ```
 
@@ -258,6 +300,7 @@ This setup ensures consistent database state across all environments — develop
 | **2025-11-07** | v1.3 | Cleanup & UI refactor: moved inline CSS/JS into static files ( `search.css/js`, `step2.css`,  `flight_step3.css`, etc.); extracted `COUNTRY_CHOICES` into `choices.py`; improved login/register pages with Forgot Password + Register Now; configured full email password-reset flow (Gmail SMTP + Django password reset views); bugfixes in multi-flight seat selection | 
 | **2025-11-08** | v1.4 | Added PayPal Sandbox integration for flight payments (Step 5); implemented live PayPal button + payment confirmation; automatic PDF invoice generation (ReportLab) and email sending via Gmail SMTP after successful booking; moved PayPal scripts and overlay styles into static files (`book_step5.css` / `book_step5.js`); improved session cleanup and confirmation UX. | 
 | **2025-11-15** | v1.5 | Major ticket system overhaul: Added QR code generation (qrcode + base64), Replaced barcode system, Full redesign of the boarding pass PDF (HTML + WeasyPrint), Extracted ticket CSS to /static/flights/ticket_pdf.css, Fixed missing template loader path & adjusted HTML template path, Refactored generate_ticket_pdf (clean buffer handling + external CSS load), Refactored invoice PDF with cleaner typography, section titles, margins, total row redesign, Cleaned requirements (WeasyPrint 60.1, pydyf 0.9.0, qrcode[pil]), Cleaned Dockerfile & docker-compose (removed ngrok, extra deps), Updated .gitignore (Flyway, Docker, staticfiles, venvs) | 
+| 2025-11-18 | v1.6 | Added full Croatia Airlines–style home page search UI (custom dropdowns, country → airport → destination logic), Implemented dynamic destination filtering based on origin (ajax/origin_countries, ajax/airports, ajax/dest_countries, ajax/dest_airports), Added Round Trip & One-Way toggle with auto-hiding return date, Integrated dynamic date availability loading via `/ajax/available_dates/` for both legs, Replaced old select boxes with interactive custom dropdown panels, Fixed missing destination airport issue (Zagreb not showing for Neum), Added login-required search validation (origin+destination blocking), Added swap button & UI refinements, Cleaned and reorganized `home_search.js` logic (origin flow, destination flow, date loading, tripType), Updated `home.html` with new search bar, added trip type selector, improved structure and clarity, Fixed dropdown panel layouts & style alignment |
 
 
 ## 🚧 Future Improvements

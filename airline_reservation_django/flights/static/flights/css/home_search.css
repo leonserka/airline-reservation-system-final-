@@ -1,0 +1,102 @@
+.search-container {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    margin-top: -60px;
+    position: relative;
+    z-index: 30;
+}
+
+.search-box {
+    display: flex;
+    background: rgba(255,255,255,0.95);
+    padding: 20px;
+    border-radius: 12px;
+    gap: 12px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+    align-items: flex-end;
+}
+
+.search-input {
+    display: flex;
+    flex-direction: column;
+    position: relative;
+}
+
+.search-input label {
+    font-size: 12px;
+    font-weight: bold;
+    color: #555;
+}
+
+.search-input input {
+    width: 190px;
+    padding: 8px 12px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.search-input.small input {
+    width: 150px;
+}
+
+.swap-btn {
+    font-size: 22px;
+    padding: 8px;
+    cursor: pointer;
+    margin-top: 12px;
+}
+
+.dropdown-panel {
+    display: none;
+    position: absolute;
+    top: 70px;
+    left: 0;
+    width: 520px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.25);
+    padding: 20px;
+    z-index: 50;
+}
+
+.dropdown-panel.show {
+    display: block;
+}
+
+.dropdown-columns {
+    display: flex;
+    gap: 20px;
+}
+
+.country-list {
+    width: 45%;
+}
+
+.airport-list {
+    width: 55%;
+    max-height: 320px;
+    overflow-y: auto;
+}
+
+.country-item, .airport-item {
+    padding: 6px 4px;
+    cursor: pointer;
+}
+
+.country-item:hover,
+.airport-item:hover {
+    background: #f2f2f2;
+    border-radius: 4px;
+}
+
+.search-btn {
+    background: #d92b2b;
+    color: white;
+    padding: 12px 22px;
+    font-size: 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    border: none;
+}

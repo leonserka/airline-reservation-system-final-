@@ -6,7 +6,6 @@ class FlightAdmin(admin.ModelAdmin):
     list_filter = ('departure_city', 'arrival_city', 'date', 'flight_type')
     search_fields = ('flight_number', 'departure_city', 'arrival_city')
 
-
 class TicketAdmin(admin.ModelAdmin):
     list_display = ('passenger_name', 'passenger_surname', 'flight', 'seat_class', 'seat_number', 'price_paid')
     list_filter = ('seat_class',)
