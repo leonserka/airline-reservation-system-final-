@@ -1,0 +1,58 @@
+# Git files
+.git
+.gitignore
+.gitattributes
+
+# Documentation
+README.md
+*.md
+docs/
+
+# IDE and editor files
+.vscode/
+.idea/
+*.sublime-workspace
+*.sublime-project
+.DS_Store
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+
+# Virtual environments
+venv/
+env/
+ENV/
+.venv/
+
+# Testing
+.coverage
+htmlcov/
+pytest_cache/
+.tox/
+
+# Build and distribution
+build/
+dist/
+*.egg-info/
+
+# Database files
+*.sqlite3
+*.db
+
+# Environment files (keep only in docker-compose)
+.env
+.env.*
+
+# Logs
+*.log
+
+# Flyway
+flyway/drivers/
+flyway/conf/
+
+# Docker
+docker-compose.override.yml

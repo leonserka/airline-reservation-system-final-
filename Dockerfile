@@ -1,27 +1,19 @@
-FROM python:3.11
+FROM python:3.11-slim
 
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 
-RUN apt-get update && apt-get install -y \
+# Install only essential system dependencies for WeasyPrint and PostgreSQL
+RUN apt-get update && apt-get install -y --no-install-recommends \
     netcat-traditional \
     libcairo2 \
     libpango-1.0-0 \
     libpangocairo-1.0-0 \
-    libpangoft2-1.0-0 \
     libgdk-pixbuf-2.0-0 \
     libffi-dev \
-    libxml2 \
-    libxslt1.1 \
     shared-mime-info \
-    fontconfig \
-    fonts-liberation \
-    libjpeg62-turbo \
-    zlib1g \
-    libthai-data \
-    libharfbuzz0b \
-    libfribidi0 \
-    && apt-get clean
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
 

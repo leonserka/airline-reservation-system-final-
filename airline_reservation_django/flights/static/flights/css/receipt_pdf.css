@@ -1,0 +1,86 @@
+/* Receipt PDF Styles */
+body {
+    font-family: 'Helvetica', Arial, sans-serif;
+    margin: 0;
+    padding: 25px;
+}
+
+.receipt-container {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.receipt-title {
+    text-align: center;
+    font-size: 20px;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+.order-info {
+    margin-bottom: 20px;
+}
+
+.order-info p {
+    margin: 5px 0;
+    font-size: 12px;
+}
+
+.section {
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+.section h2 {
+    font-size: 14px;
+    margin-bottom: 10px;
+    color: #333;
+    border-bottom: 1px solid #e0e0e0;
+    padding-bottom: 5px;
+}
+
+.section p {
+    margin: 8px 0;
+    font-size: 11px;
+}
+
+.payment-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+
+.payment-table th {
+    background-color: #f0f0f0;
+    padding: 8px;
+    text-align: left;
+    font-size: 11px;
+    font-weight: bold;
+}
+
+.payment-table td {
+    padding: 8px;
+    border: 1px solid #e0e0e0;
+    font-size: 11px;
+}
+
+.payment-table td:not(:first-child) {
+    text-align: right;
+}
+
+.total-row {
+    background-color: #e8e8e8;
+}
+
+.total-row td {
+    border: none;
+    font-weight: bold;
+}
+
+.thank-you {
+    text-align: center;
+    font-style: italic;
+    font-size: 10px;
+    margin-top: 30px;
+    color: #666;
+}
