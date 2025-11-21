@@ -1,0 +1,10 @@
+{% extends "flights/base.html" %}
+{% block content %}
+
+<h1 style="color: red;">⚠️ Error</h1>
+
+<p>{{ message }}</p>
+
+<a href="{% url 'check_booked_flights' %}" class="btn btn-primary">Back</a>
+
+{% endblock %}

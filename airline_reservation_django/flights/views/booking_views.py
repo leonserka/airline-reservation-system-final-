@@ -7,6 +7,7 @@ from ..models import Flight, Ticket
 from ..forms import PassengerForm
 from ..utils.pdf_generator import generate_receipt_pdf
 import json
+from django.db import transaction, IntegrityError
 
 def get_return_flight(request):
     rid = request.session.get("return_id")
@@ -147,6 +148,7 @@ def book_step4(request, flight_id):
         "total_price": total,
     })
 
+
 @login_required
 def book_step5(request, flight_id):
     flight = get_object_or_404(Flight, id=flight_id)
@@ -175,27 +177,48 @@ def book_step5(request, flight_id):
     except:
         return JsonResponse({"status": "error", "msg": "Invalid JSON"})
 
-    for i, pax in enumerate(passengers):
-        for fl in filter(None, [flight, return_flight]):
-            seat_list = all_selected.get(str(fl.id), [])
-            Ticket.objects.create(
-                flight=fl,
-                passenger_name=pax["passenger_name"],
-                passenger_surname=pax["passenger_surname"],
-                id_number=pax["id_number"],
-                email=pax["email"],
-                phone_number=pax["phone_number"],
-                country_code=pax["country_code"],
-                seat_class=seat_class,
-                seat_number=seat_list[i] if i < len(seat_list) else None,
-                price_paid=fl.price,
-                extra_luggage=lug,
-                extra_equipment=eq,
-                payment_method="PayPal",
-                purchased_by=request.user,
-            )
-            fl.available_seats -= 1
-            fl.save()
+    try:
+        with transaction.atomic():
+
+            for fl in filter(None, [flight, return_flight]):
+                selected_seats = all_selected.get(str(fl.id), [])
+                taken_db = set(
+                    Ticket.objects.select_for_update()
+                    .filter(flight=fl)
+                    .values_list("seat_number", flat=True)
+                )
+
+                for seat in selected_seats:
+                    if seat in taken_db:
+                        return JsonResponse({
+                            "status": "seat_taken",
+                            "seat": seat
+                        })
+
+            for i, pax in enumerate(passengers):
+                for fl in filter(None, [flight, return_flight]):
+                    seat_list = all_selected.get(str(fl.id), [])
+                    Ticket.objects.create(
+                        flight=fl,
+                        passenger_name=pax["passenger_name"],
+                        passenger_surname=pax["passenger_surname"],
+                        id_number=pax["id_number"],
+                        email=pax["email"],
+                        phone_number=pax["phone_number"],
+                        country_code=pax["country_code"],
+                        seat_class=seat_class,
+                        seat_number=seat_list[i] if i < len(seat_list) else None,
+                        price_paid=fl.price,
+                        extra_luggage=lug,
+                        extra_equipment=eq,
+                        payment_method="PayPal",
+                        purchased_by=request.user,
+                    )
+                    fl.available_seats -= 1
+                    fl.save()
+
+    except IntegrityError:
+        return JsonResponse({"status": "seat_taken", "seat": "unknown"})
 
     pdf_buffer, total_sum = generate_receipt_pdf(flight, passengers, seat_class, request.user)
 
@@ -214,6 +237,7 @@ def book_step5(request, flight_id):
     ])
 
     return JsonResponse({"status": "ok"})
+
 
 @login_required
 def book_success(request):

@@ -1,4 +1,6 @@
 from django.db import models
+from zoneinfo import ZoneInfo
+from datetime import datetime, timedelta
 
 FLIGHT_TYPE_CHOICES = [
     ('DOM', 'Domestic'),
@@ -15,8 +17,10 @@ class Flight(models.Model):
     flight_number = models.CharField(max_length=10)
     departure_country = models.CharField(max_length=50, null=True, blank=True)
     departure_city = models.CharField(max_length=50)
+    departure_timezone = models.CharField(max_length=50, default="Europe/Zagreb")
     arrival_country = models.CharField(max_length=50, null=True, blank=True)
     arrival_city = models.CharField(max_length=50)
+    arrival_timezone = models.CharField(max_length=50, default="Europe/Zagreb")
     date = models.DateField()
     departure_time = models.TimeField()
     arrival_time = models.TimeField()
@@ -25,8 +29,28 @@ class Flight(models.Model):
     available_seats = models.IntegerField()
     flight_type = models.CharField(max_length=3, choices=FLIGHT_TYPE_CHOICES)
 
+    @property
+    def departure_datetime(self):
+        naive = datetime.combine(self.date, self.departure_time)
+        dep_tz = ZoneInfo(self.departure_timezone or "UTC")
+        return naive.replace(tzinfo=dep_tz)
+
+    @property
+    def arrival_datetime(self):
+        naive_arr = datetime.combine(self.date, self.arrival_time)
+
+        if self.arrival_time <= self.departure_time:
+            naive_arr += timedelta(days=1)
+
+        dep_tz = ZoneInfo(self.departure_timezone or "UTC")
+        arr_tz = ZoneInfo(self.arrival_timezone or "UTC")
+
+        dt_in_dep = naive_arr.replace(tzinfo=dep_tz)
+        return dt_in_dep.astimezone(arr_tz)
+
     def __str__(self):
         return f"{self.flight_number} | {self.departure_city} → {self.arrival_city} | {self.date}"
+
 
 class Ticket(models.Model):
     PAYMENT_STATUS_CHOICES = [
@@ -73,6 +97,9 @@ class Ticket(models.Model):
         choices=STATUS_CHOICES,
         default='booked',
     )
+
+    checked_in = models.BooleanField(default=False)
+    checked_in_at = models.DateTimeField(null=True, blank=True)
 
     def __str__(self):
         return f"{self.passenger_name} {self.passenger_surname} | {self.flight.flight_number}"

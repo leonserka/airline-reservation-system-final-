@@ -18,8 +18,8 @@ class FlightForm(forms.ModelForm):
         model = Flight
         fields = [
             "flight_number",
-            "departure_country", "departure_city",
-            "arrival_country", "arrival_city",
+            "departure_country", "departure_city", "departure_timezone",
+            "arrival_country", "arrival_city", "arrival_timezone",
             "date", "departure_time", "arrival_time",
             "price", "total_seats", "available_seats",
             "flight_type",

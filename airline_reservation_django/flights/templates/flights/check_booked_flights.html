@@ -1,35 +1,45 @@
 {% extends 'flights/base.html' %}
+{% load tz %}
 
 {% block content %}
-    <h1>Booked Flights</h1>
+<h1>Booked Flights</h1>
 
-    {% if tickets %}
-        <table border="1">
+{% if tickets %}
+    <table border="1">
+        <tr>
+            <th>Flight</th>
+            <th>Local Time</th>
+            <th>Seat</th>
+            <th>Price</th>
+            <th>Payment Status</th>
+            <th>Action</th>
+        </tr>
+
+        {% for ticket in tickets %}
             <tr>
-                <th>Flight</th>
-                <th>Seat</th>
-                <th>Price</th>
-                <th>Payment Status</th>
-                <th>Action</th>
+                <td>
+                    {{ ticket.flight.departure_city }} → {{ ticket.flight.arrival_city }}
+                </td>
+
+                <td>
+                    🛫 {{ ticket.flight.departure_datetime|timezone:ticket.flight.departure_timezone|date:"Y-m-d H:i" }}<br>
+                    🛬 {{ ticket.flight.arrival_datetime|timezone:ticket.flight.arrival_timezone|date:"Y-m-d H:i" }}
+                </td>
+
+                <td>{{ ticket.seat_number }} ({{ ticket.seat_class }})</td>
+                <td>€{{ ticket.price_paid }}</td>
+                <td>{{ ticket.payment_status|capfirst }}</td>
+
+                <td>
+                    <a href="{% url 'about_ticket' ticket.id %}">About Ticket</a>
+                </td>
             </tr>
-            {% for ticket in tickets %}
-                <tr>
-                    <td>{{ ticket.flight.departure_city }} → {{ ticket.flight.arrival_city }} | {{ ticket.flight.date }}</td>
-                    <td>{{ ticket.seat_number }} ({{ ticket.seat_class }})</td>
-                    <td>€{{ ticket.price_paid }}</td>
-                    <td>{{ ticket.payment_status }}</td>
-                    <td>
-                        {% if ticket.seat_class == "PLUS" %}
-                            <a href="{% url 'about_ticket' ticket.id %}">About Ticket</a>
-                        {% else %}
-                            <a href="{% url 'about_ticket' ticket.id %}">About Ticket</a>
-                        {% endif %}
-                    </td>
-                </tr>
-            {% endfor %}
-        </table>
-    {% else %}
-        <p>You have not booked any flights yet.</p>
-    {% endif %}
-    <a href="{% url 'home' %}" class="btn btn-primary">Return Home</a>
+        {% endfor %}
+    </table>
+{% else %}
+    <p>You have not booked any flights yet.</p>
+{% endif %}
+
+<a href="{% url 'home' %}" class="btn btn-primary">Return Home</a>
+
 {% endblock %}

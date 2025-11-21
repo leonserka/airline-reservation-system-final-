@@ -20,34 +20,37 @@
 
         <div class="row">
             <div>
-                <div class="label">Departure</div>
-                <div class="value">{{ ticket.flight.date }} {{ ticket.flight.departure_time }}</div>
+                <div class="section-title">DEPARTURE (LOCAL)</div>
+                <p class="big">{{ departure_local }}</p>
             </div>
+
             <div>
-                <div class="label">Seat</div>
-                <div class="value">{{ ticket.seat_number|default:"N/A" }}</div>
+                <div class="section-title">ARRIVAL (LOCAL)</div>
+                <p class="big">{{ arrival_local }}</p>
             </div>
         </div>
 
         <div class="row">
             <div>
-                <div class="label">Passenger</div>
-                <div class="value">{{ ticket.passenger_name }} {{ ticket.passenger_surname }}</div>
+                <div class="section-title">SEAT</div>
+                <p class="big">{{ ticket.seat_number|default:"N/A" }}</p>
             </div>
+
             <div>
-                <div class="label">Class</div>
-                <div class="value">{{ ticket.seat_class }}</div>
+                <div class="section-title">CLASS</div>
+                <p class="big">{{ ticket.seat_class }}</p>
             </div>
         </div>
 
         <div class="row">
             <div>
-                <div class="label">Price Paid</div>
-                <div class="value">€{{ ticket.price_paid }}</div>
+                <div class="section-title">PASSENGER</div>
+                <p class="big">{{ ticket.passenger_name }} {{ ticket.passenger_surname }}</p>
             </div>
+
             <div>
-                <div class="label">Status</div>
-                <div class="value">{{ ticket.status|capfirst }}</div>
+                <div class="section-title">PRICE</div>
+                <p class="big">€{{ ticket.price_paid }}</p>
             </div>
         </div>
 
@@ -62,3 +65,4 @@
 
 </body>
 </html>
+<!-- ...existing code... -->

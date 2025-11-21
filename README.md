@@ -15,10 +15,12 @@ The **Airline Reservation System** is a full-stack web application built with th
   3. Select a seat on the airplane map (supports multiple passengers)
   4. (Optional) Add extras: Extra Luggage (10/20/23 kg) & Equipment (Sports/Music/Baby)
   5. Payment & ticket issuing
+- race conditioning for users if 2 people buys same seat slower user will get error and masage to change seat
 - View all purchased tickets (**Check Booked Flights**) — shows tickets bought by the logged-in user (even for other passengers)
 - View ticket details (**About Ticket**) — includes extras and PDF ticket with a QR code  
 - Cancel a ticket (**Cancel Ticket**) – available only for **PLUS** class  
-- When a ticket is canceled, the seat automatically becomes available again  
+- When a ticket is canceled, the seat automatically becomes available again
+- Real time zones flight times   
 
 ### 🧑‍💼 Administrator
 - Add, edit, and delete flights through the **Django Admin Panel**  
@@ -33,9 +35,11 @@ The **Airline Reservation System** is a full-stack web application built with th
 Contains flight details:
 - Flight number  
 - Departure and arrival country & city
+- Departure and arrival timezone
 - Date and time of departure  
 - Flight price 
 - Seat availability
+- Price
 - Flight type (Domestic / International) 
 
 ### 🎫 Ticket
@@ -43,10 +47,12 @@ Contains ticket and passenger details:
 - Passenger info (name, surname, ID number, email, phone, country)  
 - Linked flight (**ForeignKey → Flight**)  
 - Seat class and seat number  
+- extra_luggage or equipment
 - Payment method  
 - **Payment Status:** Paid / Refunded  
 - **Ticket Status:** Booked / Canceled
 - **Purchased By:** `auth.user` (who paid for the booking) 
+- **Checked in:** 
 
 ---
 
@@ -165,7 +171,9 @@ airline_reservation_django\
 │   └── sql\                        
 │       ├── V1__initial_schema.sql  
 │       ├── V2__add_schema.sql  
-│       └── V3__add_timestamp.sql  
+│       ├── V3__add_timestamp.sql 
+│       ├── V4__add_checkin_fields.sql
+│       └── V5__add_timezones.sql 
 │
 └── airline_reservation_django\
     ├── manage.py                   
@@ -222,7 +230,8 @@ airline_reservation_django\
     │   │       ├── base.html           
     │   │       ├── home.html           
     │   │       ├── flight_list.html    
-    │   │       ├── create_flight.html 
+    │   │       ├── create_flight.html  
+    │   │       ├── check_in.html
     │   │       ├── book_step1.html     
     │   │       ├── book_step2.html     
     │   │       ├── book_step3.html     
@@ -266,6 +275,8 @@ airline_reservation_django\
 - 🐳 Docker & Docker Compose — containerized environment
 - 💻 HTML, CSS, JavaScript
 - 🎨 Bootstrap — frontend styling
+- 💳 PayPal API — payment integration
+- 📧 Google API — email services
 
 ---
 
@@ -301,6 +312,7 @@ This setup ensures consistent database state across all environments — develop
 | **2025-11-08** | v1.4 | Added PayPal Sandbox integration for flight payments (Step 5); implemented live PayPal button + payment confirmation; automatic PDF invoice generation (ReportLab) and email sending via Gmail SMTP after successful booking; moved PayPal scripts and overlay styles into static files (`book_step5.css` / `book_step5.js`); improved session cleanup and confirmation UX. | 
 | **2025-11-15** | v1.5 | Major ticket system overhaul: Added QR code generation (qrcode + base64), Replaced barcode system, Full redesign of the boarding pass PDF (HTML + WeasyPrint), Extracted ticket CSS to /static/flights/ticket_pdf.css, Fixed missing template loader path & adjusted HTML template path, Refactored generate_ticket_pdf (clean buffer handling + external CSS load), Refactored invoice PDF with cleaner typography, section titles, margins, total row redesign, Cleaned requirements (WeasyPrint 60.1, pydyf 0.9.0, qrcode[pil]), Cleaned Dockerfile & docker-compose (removed ngrok, extra deps), Updated .gitignore (Flyway, Docker, staticfiles, venvs) | 
 | 2025-11-18 | v1.6 | Added full Croatia Airlines–style home page search UI (custom dropdowns, country → airport → destination logic), Implemented dynamic destination filtering based on origin (ajax/origin_countries, ajax/airports, ajax/dest_countries, ajax/dest_airports), Added Round Trip & One-Way toggle with auto-hiding return date, Integrated dynamic date availability loading via `/ajax/available_dates/` for both legs, Replaced old select boxes with interactive custom dropdown panels, Fixed missing destination airport issue (Zagreb not showing for Neum), Added login-required search validation (origin+destination blocking), Added swap button & UI refinements, Cleaned and reorganized `home_search.js` logic (origin flow, destination flow, date loading, tripType), Updated `home.html` with new search bar, added trip type selector, improved structure and clarity, Fixed dropdown panel layouts & style alignment |
+| 2025-11-20 | v1.7 | Implemented Check-In functionality — users can check in 24h before flight, otherwise displays error: “Check-in available 24h before departure.”. Added real timezone handling for flights (example: Helsinki flight stored as `10:00–13:00` in database, displays `14:00` (+1h) timezone). Introduced `race condition` handling for seat purchase — if two users try to buy the same seat, the slower one receives an error. Added passenger verification for check-in — requires first name, last name, and OIB as confirmation. Updated backend and database to support timezone-aware flight times and check-in validation. Minor UI refinements for check-in form (name, surname, OIB fields, error display). |
 
 
 ## 🚧 Future Improvements
@@ -308,6 +320,8 @@ This setup ensures consistent database state across all environments — develop
 - Cancel flight (admin) — delete flight from database
 - Check all bought tickets by route 
 - Admin dashboard with earnings display and statistics (daily/weekly/monthly, top routes, occupancy)
+- currency handling
+- Check-in notifications on gmail
 
 
 ---

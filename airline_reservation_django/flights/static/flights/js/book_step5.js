@@ -33,28 +33,38 @@ paypal.Buttons({
             .then(response => response.json())
             .then(result => {
                 document.getElementById("loading-overlay").style.display = "none";
+
                 if (result.status === "ok") {
                     alert("✅ Payment completed by " + details.payer.name.given_name);
                     window.location.href = BOOK_SUCCESS_URL;
+
+                } else if (result.status === "seat_taken") {
+                    alert(`Seat ${result.seat} is no longer available. Please choose another seat.`);
+                    window.location.href = `/book/${FLIGHT_ID}/step3/`;
+
                 } else {
-                    alert("❌ Error saving your booking. Please contact support.");
+                    alert("❌ Error saving your booking. Please choose your seats again.");
+                    window.location.href = `/book/${FLIGHT_ID}/step3/`;
                 }
             })
             .catch(err => {
                 document.getElementById("loading-overlay").style.display = "none";
                 console.error(err);
-                alert("Unexpected error occurred.");
+                alert("Unexpected error occurred. Redirecting to seat selection.");
+                window.location.href = `/book/${FLIGHT_ID}/step3/`;
             });
         });
     },
 
     onCancel: function () {
         alert('❌ Payment cancelled.');
+        window.location.href = `/book/${FLIGHT_ID}/step3/`; 
     },
 
     onError: function (err) {
         console.error('PayPal Error:', err);
-        alert('An error occurred while processing your payment.');
+        alert('An error occurred while processing your payment. Redirecting to seat selection.');
+        window.location.href = `/book/${FLIGHT_ID}/step3/`;
     }
 
 }).render('#paypal-button-container');
