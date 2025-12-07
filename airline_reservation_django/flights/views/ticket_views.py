@@ -25,12 +25,20 @@ def cancel_booked_flight(request, ticket_id):
             "message": "You can only cancel PLUS class tickets."
         })
 
+    flight = ticket.flight
+
     ticket.status = "canceled"
     ticket.payment_status = "refunded"
+
+    if ticket.seat_number:
+        flight.available_seats += 1
+        flight.save()
+
     ticket.seat_number = None
     ticket.save()
 
     return redirect("check_booked_flights")
+
 
 @login_required
 def about_ticket(request, ticket_id):

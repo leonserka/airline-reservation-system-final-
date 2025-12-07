@@ -34,17 +34,17 @@
     <table class="tbl">
         <tr>
             <th>Passenger</th>
-            <th>Price</th>
-            <th>Tax</th>
-            <th>Total</th>
+            <th>Seat</th>
+            <th>Class</th>
+            <th>Price (€)</th>
         </tr>
 
         {% for p in passengers %}
         <tr>
             <td>{{ p.name }}</td>
             <td>{{ p.base }} €</td>
-            <td>{{ p.tax }} €</td>
-            <td>{{ p.total }} €</td>
+            <td>{{ p.class }} €</td>
+            <td>{{ p.price }} €</td>
         </tr>
         {% endfor %}
 
