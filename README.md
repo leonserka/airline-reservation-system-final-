@@ -316,13 +316,23 @@ This setup ensures consistent database state across all environments — develop
 
 
 ## 🚧 Future Improvements
-- Admin section: List all flights with filter by route (departure Split, arrival Madrid)
 - Cancel flight (admin) — delete flight from database
 - Check all bought tickets by route 
 - Admin dashboard with earnings display and statistics (daily/weekly/monthly, top routes, occupancy)
 - currency handling
 - Check-in notifications on gmail
-
+- Dynamic airplane seat map (improved seat layout)
+- Edit / change seat after booking
+- Admin dashboard with analytics and statistics
+- Automatic email reminders (push mail notifications)
+- Loyalty program (reward points system)
+- Coupons / promo code discounts
+- Refund API (automated payment refunds)
+- Multilingual support (EN, HR, DE)
+- User profile page with history & stats
+- Responsive design
+- Automatic check-in notifications (Scheduled email reminders 24h before flight)
+- Currency handling
 
 ---
 
