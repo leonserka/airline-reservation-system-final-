@@ -10,7 +10,6 @@ html, body {
     overflow-x: hidden !important;
 }
 
-
 .home-carousel {
     position: relative;
     width: 100%;
@@ -69,7 +68,7 @@ html, body {
     user-select: none;
     z-index: 50;
     transition: background 0.3s;    
-    white-space: nowrap;       /* 🔥 SPRJEČAVA širenje */
+    white-space: nowrap;       
     overflow: hidden;
     max-width: 60px; 
 }

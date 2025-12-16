@@ -3,57 +3,53 @@
 
 {% block content %}
 <h1>Step 3: Select Your Seats</h1>
-<p>Flight: {{ flight.departure_city }} → {{ flight.arrival_city }} | {{ flight.date }}</p>
-<p>Selected Class: {{ request.session.seat_class }}</p>
-<p>Total Price: {{ total_price }} €</p>
 
-<p>You need to select {{ num_passengers }} seat{{ num_passengers|pluralize:"s" }}.</p>
-<p>Selected: {{ selected_seats|length }} / {{ num_passengers }}</p>
+<p>
+  Flight: {{ flight.departure_city }} → {{ flight.arrival_city }} |
+  {{ flight.date }}
+</p>
+
+<p>Selected class: {{ request.session.seat_class }}</p>
+<p>Total price: {{ total_price }} €</p>
+
+<p>
+  Selected seats: {{ selected_seats|length }} /
+  {{ num_passengers }}
+</p>
 
 <form method="post">
   {% csrf_token %}
+
   <div class="seat-map-container"
        style="background-image: url('{% static "flights/img/avion.png" %}');">
 
     {% for row in seat_positions %}
-      <div class="row">
-        <div class="left-side">
-          {% for seat in row.left %}
-            <div 
-              class="seat {% if seat.occupied %}occupied{% elif seat.seat_id|stringformat:'s' in selected_seats %}selected{% endif %}"
-              id="seat-{{ seat.seat_id }}"
-              style="top: {{ seat.top }}px; left: {{ seat.left }}px;"
-              data-seat="{{ seat.seat_id }}">
-              {{ seat.seat_id }}
-            </div>
-          {% endfor %}
+      {% for seat in row.left %}
+        <div
+          class="seat {% if seat.occupied %}occupied{% elif seat.seat_id|stringformat:'s' in selected_seats %}selected{% endif %}"
+          style="top: {{ seat.top }}px; left: {{ seat.left }}px;"
+          data-seat="{{ seat.seat_id }}">
+          {{ seat.seat_id }}
         </div>
+      {% endfor %}
 
-        <div class="right-side">
-          {% for seat in row.right %}
-            <div 
-              class="seat {% if seat.occupied %}occupied{% elif seat.seat_id|stringformat:'s' in selected_seats %}selected{% endif %}"
-              id="seat-{{ seat.seat_id }}"
-              style="top: {{ seat.top }}px; left: {{ seat.left }}px;"
-              data-seat="{{ seat.seat_id }}">
-              {{ seat.seat_id }}
-            </div>
-          {% endfor %}
+      {% for seat in row.right %}
+        <div
+          class="seat {% if seat.occupied %}occupied{% elif seat.seat_id|stringformat:'s' in selected_seats %}selected{% endif %}"
+          style="top: {{ seat.top }}px; left: {{ seat.left|add:80 }}px;"
+          data-seat="{{ seat.seat_id }}">
+          {{ seat.seat_id }}
         </div>
-      </div>
+      {% endfor %}
     {% endfor %}
-
   </div>
 
   <input type="hidden" name="selected_seat" id="selected_seat_input">
 
-  {% if selected_seats|length >= num_passengers %}
-    <button type="submit" formaction="{% url 'book_step4' flight.id %}" class="continue-btn">
-      Continue to Payment
-    </button>
-  {% endif %}
+  <p>Remaining seats to choose: {{ remaining }}</p>
 </form>
-<p>Once you pick your seat there will be no changes allowed. for more information, please contact support.</p>
+
 <link rel="stylesheet" href="{% static 'flights/css/flight_step3.css' %}">
 <script src="{% static 'flights/js/flight_step3.js' %}"></script>
+
 {% endblock %}

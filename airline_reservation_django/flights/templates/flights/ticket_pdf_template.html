@@ -1,68 +1,162 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <meta charset="utf-8">
-    <title>Boarding Pass</title>
+  <meta charset="UTF-8">
+  <title>Boarding Pass</title>
 </head>
+
 <body>
+<div class="bp-page">
 
-<h1 class="title">Boarding Pass</h1>
+  <div class="bp-header">
+    <div class="bp-title">
+      BOARDING PASS – {{ ticket.seat_class }}
+    </div>
+    <div class="bp-airline">
+      AIRLINE RESERVATION
+    </div>
+  </div>
 
-<div class="ticket">
-
-    <div class="left">
-
-        <div class="section-title">From</div>
-        <p class="big">{{ ticket.flight.departure_city }}</p>
-
-        <div class="section-title to-section">To</div>
-        <p class="big">{{ ticket.flight.arrival_city }}</p>
-
-        <div class="row">
-            <div>
-                <div class="section-title">DEPARTURE (LOCAL)</div>
-                <p class="big">{{ departure_local }}</p>
-            </div>
-
-            <div>
-                <div class="section-title">ARRIVAL (LOCAL)</div>
-                <p class="big">{{ arrival_local }}</p>
-            </div>
+  <div class="bp-main-box">
+    <div class="bp-row bp-passenger">
+      <div>
+        <div class="label">Passenger</div>
+        <div class="value">
+          {{ ticket.passenger_name }} {{ ticket.passenger_surname }}
         </div>
+      </div>
 
-        <div class="row">
-            <div>
-                <div class="section-title">SEAT</div>
-                <p class="big">{{ ticket.seat_number|default:"N/A" }}</p>
-            </div>
-
-            <div>
-                <div class="section-title">CLASS</div>
-                <p class="big">{{ ticket.seat_class }}</p>
-            </div>
-        </div>
-
-        <div class="row">
-            <div>
-                <div class="section-title">PASSENGER</div>
-                <p class="big">{{ ticket.passenger_name }} {{ ticket.passenger_surname }}</p>
-            </div>
-
-            <div>
-                <div class="section-title">PRICE</div>
-                <p class="big">€{{ ticket.price_paid }}</p>
-            </div>
-        </div>
-
+      <div class="bp-qr">
+        <img src="data:image/png;base64,{{ qr_base64 }}">
+      </div>
     </div>
 
-    <div class="right">
-        <div class="plane-icon">&#9992;</div>
-        <img src="data:image/png;base64,{{ qr_base64 }}" class="qr-code">
+    <div class="bp-row bp-route">
+      <div>
+        <div class="value big">
+          {{ ticket.flight.departure_city }} → {{ ticket.flight.arrival_city }}
+        </div>
+      </div>
+
+      <div>
+        <div class="label">Flight Number</div>
+        <div class="value">
+          {{ ticket.flight.flight_number }}
+        </div>
+      </div>
     </div>
 
+    <div class="bp-row bp-times">
+      <div>
+        <div class="label">Boarding Gate Closes</div>
+        <div class="value">{{ gate_closes }}</div>
+      </div>
+
+      <div>
+        <div class="label">Departure Time</div>
+        <div class="value">{{ departure_local }}</div>
+      </div>
+
+      <div>
+        <div class="label">Seat</div>
+        <div class="value">{{ ticket.seat_number }}</div>
+      </div>
+    </div>
+
+    <div class="bp-row bp-info">
+      <div>
+        <div class="label">Operated by</div>
+        <div class="value">Airline Reservation</div>
+      </div>
+
+      <div>
+        <div class="label">Travel Date</div>
+        <div class="value">{{ ticket.flight.date }}</div>
+      </div>
+
+      <div>
+        <div class="label">Order</div>
+        <div class="value">#{{ ticket.id }}</div>
+      </div>
+
+      <div>
+        <div class="label">Price</div>
+        <div class="value">€{{ ticket.price_paid }}</div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="bp-bottom">
+
+    <div class="bp-box">
+      <div class="box-title">Equipment</div>
+      <div class="box-value">
+        {{ ticket.extra_equipment|default:"None" }}
+      </div>
+    </div>
+
+<div class="bp-box">
+  <div class="box-title">Your baggage allowance</div>
+
+  <div class="box-value">
+    Cabin bag – Hand luggage <strong>7 kg</strong><br>
+    <small>(included for all passengers)</small>
+  </div>
+
+  {% if ticket.seat_class == "REGULAR" or ticket.seat_class == "PLUS" %}
+    <div class="box-value">
+      Priority bag – Locker bag <strong>10 kg</strong><br>
+      <small>(REGULAR & PLUS)</small>
+    </div>
+  {% endif %}
+
+  {% if ticket.seat_class == "PLUS" %}
+    <div class="box-value">
+      Checked baggage – Check-in bag <strong>20 kg</strong><br>
+      <small>(PLUS only)</small>
+    </div>
+  {% endif %}
+  <div class="box-value" style="margin-top:8px;">
+    🧳 <strong>Extra Luggage</strong><br>
+
+    <small>
+      {% if ticket.extra_luggage == "10kg" %}
+        ✔ 10 kg checked-in bag (+20 €)<br>
+      {% else %}
+        10 kg checked-in bag (+20 €)<br>
+      {% endif %}
+
+      {% if ticket.extra_luggage == "20kg" %}
+        ✔ 20 kg checked-in bag (+30 €)<br>
+      {% else %}
+        20 kg checked-in bag (+30 €)<br>
+      {% endif %}
+
+      {% if ticket.extra_luggage == "23kg" %}
+        ✔ 23 kg checked-in bag (+40 €)<br>
+      {% else %}
+        23 kg checked-in bag (+40 €)<br>
+      {% endif %}
+
+      {% if not ticket.extra_luggage %}
+        ✔ No extra luggage
+      {% else %}
+        No extra luggage
+      {% endif %}
+    </small>
+  </div>
 </div>
 
+
+
+  </div>
+
+  <div class="bp-warning">
+    Your gate closes 30 minutes before departure.
+    Travel will be refused if you arrive late.
+  </div>
+
+</div>
 </body>
 </html>
-<!-- ...existing code... -->

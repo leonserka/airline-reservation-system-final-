@@ -1,4 +1,4 @@
-/* ============= GLOBAL ============= */
+
 * {
     box-sizing: border-box;
 }
@@ -11,8 +11,6 @@ html, body {
     max-width: 100%;
 }
 
-
-/* ============= HEADER ============= */
 .ca-header {
     width: 100%;
     height: 65px;
@@ -85,8 +83,6 @@ html, body {
     border-radius: 2px;
 }
 
-
-/* ============= LOGIN DROPDOWN ============= */
 
 .login-dropdown {
     position: absolute;
