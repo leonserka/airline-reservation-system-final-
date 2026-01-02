@@ -10,11 +10,8 @@ from weasyprint import HTML, CSS
 class PdfService:
     @staticmethod
     def generate_ticket_pdf(ticket):
-        """Generira PDF za ukrcajnu kartu (Boarding Pass)."""
         departure_local = ticket.flight.departure_datetime.strftime("%Y-%m-%d %H:%M")
         arrival_local = ticket.flight.arrival_datetime.strftime("%Y-%m-%d %H:%M")
-
-        # Generiranje QR koda
         qr_data = f"TICKET-{ticket.id}-{ticket.flight.flight_number}"
         qr_img = qrcode.make(qr_data)
         buffer = BytesIO()
@@ -34,14 +31,11 @@ class PdfService:
         }
 
         html = render_to_string("flights/ticket_pdf_template.html", context)
-        
-        # Učitavanje CSS-a
         css_path = os.path.join(
             settings.BASE_DIR, "flights", "static", "flights", "css", "ticket_pdf.css"
         )
 
         pdf_bytes = HTML(string=html).write_pdf(stylesheets=[CSS(css_path)])
-
         out = BytesIO()
         out.write(pdf_bytes)
         out.seek(0)
@@ -49,14 +43,11 @@ class PdfService:
 
     @staticmethod
     def generate_receipt_pdf(flight, passengers, seat_class, user):
-        """Generira PDF račun."""
         rows = []
         total_sum = 0.0
 
         for p in passengers:
             price = float(flight.price)
-            # Ako imaš logiku za različite cijene po klasi, dodaj je ovdje
-            
             rows.append({
                 "name": f"{p['passenger_name']} {p['passenger_surname']}",
                 "seat": p.get("seat_number", "N/A"),
@@ -75,17 +66,12 @@ class PdfService:
         }
 
         html = render_to_string("flights/receipt_pdf_template.html", context)
-        
-        # POPRAVAK: Dodajemo CSS i za račun!
         css_path = os.path.join(
             settings.BASE_DIR, "flights", "static", "flights", "css", "receipt_pdf.css"
         )
         
-        # Provjera postoji li CSS file prije nego ga probamo učitati
         stylesheets = [CSS(css_path)] if os.path.exists(css_path) else []
-
         pdf_bytes = HTML(string=html).write_pdf(stylesheets=stylesheets)
-
         out = BytesIO()
         out.write(pdf_bytes)
         out.seek(0)

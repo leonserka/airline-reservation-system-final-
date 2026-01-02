@@ -1,8 +1,6 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
-
-# PROMJENA: Importamo EmailService klasu
 from ..services.email_service import EmailService
 from ..services.ticket_service import TicketService
 
@@ -52,12 +50,10 @@ def check_in(request, ticket_id):
         first_name = request.POST.get("first_name")
         last_name = request.POST.get("last_name")
         id_number = request.POST.get("id_number")
-
         res = TicketService.verify_checkin_data(ticket, first_name, last_name, id_number)
         
         if res.ok:
             TicketService.mark_checked_in(ticket)
-            # PROMJENA: Poziv statičke metode
             EmailService.send_checkin_email(ticket.email, ticket.flight.flight_number)
             return redirect("about_ticket", ticket_id=ticket.id)
 

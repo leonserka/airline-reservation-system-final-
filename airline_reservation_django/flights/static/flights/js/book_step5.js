@@ -1,4 +1,3 @@
-// Dohvati CSRF token (za svaki slučaj, ako nije definiran u HTML-u)
 function getCookie(name) {
     let cookieValue = null;
     if (document.cookie && document.cookie !== '') {
@@ -34,11 +33,10 @@ paypal.Buttons({
     },
 
     onApprove: function(data, actions) {
-        // Prikaži loading overlay dok se obrađuje
         document.getElementById("loading-overlay").style.display = "flex";
 
         return actions.order.capture().then(function(details) {
-            fetch("", {  // Šalje na trenutni URL (book_step5)
+            fetch("", {  
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -55,19 +53,14 @@ paypal.Buttons({
                 document.getElementById("loading-overlay").style.display = "none";
 
                 if (result.status === "ok") {
-                    // USPJEH: Preusmjeri na stranicu potvrde
-                    // alert("✅ Payment completed by " + details.payer.name.given_name); // Možeš maknuti alert ako želiš brži prijelaz
                     window.location.href = BOOK_SUCCESS_URL;
 
                 } else if (result.status === "seat_taken") {
-                    // GREŠKA: Sjedalo zauzeto
                     alert(`⚠️ Seat ${result.seat} was just taken by someone else! Please choose another seat.`);
                     window.location.href = `/book/${FLIGHT_ID}/step3/`;
 
                 } else {
-                    // OSTALE GREŠKE
                     alert("❌ Error: " + (result.msg || "An unexpected error occurred."));
-                    // Ako je greška kritična, možda je bolje vratiti na početak ili step3
                     window.location.href = `/book/${FLIGHT_ID}/step3/`;
                 }
             })

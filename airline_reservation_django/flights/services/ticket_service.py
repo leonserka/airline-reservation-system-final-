@@ -15,12 +15,10 @@ class TicketService:
         
     @staticmethod
     def get_user_tickets(user):
-        """Dohvaća sve karte korisnika s učitanim letovima."""
         return Ticket.objects.filter(purchased_by=user).select_related("flight").order_by('-id')
 
     @staticmethod
     def get_ticket(ticket_id, user):
-        """Siguran dohvat jedne karte. Baca 404 ako ne postoji ili nije od usera."""
         return get_object_or_404(Ticket, id=ticket_id, purchased_by=user)
 
     @staticmethod

@@ -1,18 +1,13 @@
 from django.db import transaction, IntegrityError
 from ..models import Ticket
 from ..services.pdf_service import PdfService
-# PROMJENA: Importamo klasu, a ne funkciju
 from ..services.email_service import EmailService
 
 class BookingService:
     @staticmethod
     def process_booking(user, flight, return_flight, passengers, seat_class, all_selected_seats, total_price):
-        """
-        Obavlja atomsku transakciju rezervacije.
-        """
         try:
             with transaction.atomic():
-                # 1. Provjera jesu li sjedala u međuvremenu zauzeta
                 for fl in filter(None, [flight, return_flight]):
                     selected = all_selected_seats.get(str(fl.id), [])
                     
@@ -26,7 +21,6 @@ class BookingService:
                         if seat in taken:
                             return {"status": "seat_taken", "seat": seat}
 
-                # 2. Kreiranje karata (Ticket)
                 created_tickets = []
                 for i, pax in enumerate(passengers):
                     for fl in filter(None, [flight, return_flight]):
@@ -56,10 +50,8 @@ class BookingService:
         except Exception as e:
             return {"status": "error", "msg": str(e)}
 
-        # 3. Generiranje PDF računa i slanje emaila
         try:
             pdf_buffer, total_sum = PdfService.generate_receipt_pdf(flight, passengers, seat_class, user)
-            # PROMJENA: Poziv statičke metode
             EmailService.send_receipt_email(user.email, total_sum, pdf_buffer)
         except Exception as e:
             print(f"Error sending email: {e}")

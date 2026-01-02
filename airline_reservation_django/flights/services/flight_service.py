@@ -4,7 +4,6 @@ from ..models import Flight
 class FlightService:
     @staticmethod
     def valid_date(value):
-        """Pomoćna metoda za parsiranje datuma"""
         try:
             return datetime.strptime(value, "%Y-%m-%d").date()
         except (ValueError, TypeError):
@@ -12,14 +11,9 @@ class FlightService:
 
     @staticmethod
     def search(dep_city, arr_city, dep_date_str, ret_date_str):
-        """
-        Vraća rezultate pretrage letova.
-        Koristi se u flights/views/flights.py
-        """
         today = date.today()
         dep_date = FlightService.valid_date(dep_date_str)
         ret_date = FlightService.valid_date(ret_date_str)
-
         flights = Flight.objects.none()
         returns = Flight.objects.none()
         show_results = False
@@ -32,10 +26,8 @@ class FlightService:
                 date__gte=today
             )
 
-            # Ako je zadan datum, filtriraj po njemu, inače daj sve buduće
             flights = base.filter(date=dep_date) if dep_date else base
 
-            # Povratni letovi
             if ret_date:
                 returns = Flight.objects.filter(
                     departure_city=arr_city,
@@ -53,13 +45,8 @@ class FlightService:
 
     @staticmethod
     def get_routes():
-        """
-        Vraća rječnik ruta { 'PolazniGrad': ['Odredište1', 'Odredište2'] }
-        Koristi se u FlightSearchForm i viewovima.
-        """
         today = date.today()
         routes = {}
-        # Optimizirani dohvat samo potrebnih polja
         qs = Flight.objects.filter(date__gte=today).values_list('departure_city', 'arrival_city').distinct()
         
         for dep, arr in qs:
@@ -67,11 +54,8 @@ class FlightService:
             
         return {k: list(v) for k, v in routes.items()}
 
-    # --- AJAX Helper Metode ---
-
     @staticmethod
     def _distinct_list(field, **filters):
-        """Privatna pomoćna metoda za dohvat jedinstvenih vrijednosti."""
         return list(
             Flight.objects.filter(**filters)
             .values_list(field, flat=True)
