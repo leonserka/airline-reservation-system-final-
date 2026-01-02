@@ -4,7 +4,7 @@ from django.contrib.auth.models import User
 from .models import Flight, Ticket
 from .country_codes import COUNTRY_CODES
 from .choices import COUNTRY_CHOICES
-
+from .services.flight_service import FlightService
 
 class FlightForm(forms.ModelForm):
     departure_country = forms.ChoiceField(
@@ -30,7 +30,6 @@ class FlightForm(forms.ModelForm):
             "arrival_time": forms.TimeInput(attrs={"type": "time"}),
         }
 
-
 class RegisterForm(UserCreationForm):
     email = forms.EmailField()
 
@@ -38,37 +37,19 @@ class RegisterForm(UserCreationForm):
         model = User
         fields = ["username", "email", "password1", "password2"]
 
-
 class FlightSearchForm(forms.Form):
     departure_city = forms.ChoiceField(choices=[], label="Departure")
     arrival_city = forms.ChoiceField(choices=[], label="Arrival")
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-
-        departures = (
-            Flight.objects.order_by()
-            .values_list("departure_city", flat=True)
-            .distinct()
-        )
-
-        arrivals = (
-            Flight.objects.order_by()
-            .values_list("arrival_city", flat=True)
-            .distinct()
-        )
-
+        routes = FlightService.get_routes()
+        departures = sorted(routes.keys())
+        arrivals = set()
+        for dest_list in routes.values():
+            arrivals.update(dest_list)      
         self.fields["departure_city"].choices = [(c, c) for c in departures]
-        self.fields["arrival_city"].choices = [(c, c) for c in arrivals]
-
-        self.routes = {
-            dep: list(
-                Flight.objects.filter(departure_city=dep)
-                .values_list("arrival_city", flat=True)
-                .distinct()
-            )
-            for dep in departures
-        }
+        self.fields["arrival_city"].choices = [(c, c) for c in sorted(list(arrivals))]
 
 class TicketForm(forms.ModelForm):
     class Meta:
@@ -101,7 +82,6 @@ class PassengerForm(forms.ModelForm):
             "id_number": forms.TextInput(attrs={"maxlength": 11}),
             "email": forms.EmailInput(),
         }
-
 
 class SeatSelectionForm(forms.ModelForm):
     class Meta:

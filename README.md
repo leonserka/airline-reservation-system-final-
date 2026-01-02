@@ -190,11 +190,21 @@ airline_reservation_django\
     │   ├── admin.py               
     │   ├── apps.py                 
     │   ├── country_codes.py        
-    │   ├── choices.py             
+    │   ├── choices.py   
+    │   ├── constants.py            
     │   ├── forms.py                
     │   ├── models.py               
     │   ├── urls.py                
     │   │
+    │   ├── services\   
+    │   │   ├── __init__.py
+    │   │   ├── booking_service.py
+    │   │   ├── booking_session.py
+    │   │   ├── flight_service.py
+    │   │   ├── email_service.py
+    │   │   ├── pdf_service.py
+    │   │   ├── seatmap_service.py
+    │   │   └── ticket_service.py
     │   │
     │   ├── static\                     
     │   │   └── flights\
@@ -250,14 +260,13 @@ airline_reservation_django\
     │   │       ├──ticket_pdf_template.html
     │   │       └── register.html       
     │   │
-    │   ├── utils\                      
-    │   │   ├── pdf_generator.py         
-    │   │   └── __init__.py
     │   │   
     │   ├── views\                     
-    │   │   ├── booking_views.py        
-    │   │   ├── misc_views.py           
-    │   │   ├── ticket_views.py         
+    │   │   ├── booking.py        
+    │   │   ├── ajax.py           
+    │   │   ├── auth.py    
+    │   │   ├── flights.py   
+    │   │   ├── tickets.py        
     │   │   └── __init__.py
     │   │   
     ├── staticfiles\            
@@ -313,6 +322,7 @@ This setup ensures consistent database state across all environments — develop
 | **2025-11-15** | v1.5 | Major ticket system overhaul: Added QR code generation (qrcode + base64), Replaced barcode system, Full redesign of the boarding pass PDF (HTML + WeasyPrint), Extracted ticket CSS to /static/flights/ticket_pdf.css, Fixed missing template loader path & adjusted HTML template path, Refactored generate_ticket_pdf (clean buffer handling + external CSS load), Refactored invoice PDF with cleaner typography, section titles, margins, total row redesign, Cleaned requirements (WeasyPrint 60.1, pydyf 0.9.0, qrcode[pil]), Cleaned Dockerfile & docker-compose (removed ngrok, extra deps), Updated .gitignore (Flyway, Docker, staticfiles, venvs) | 
 | 2025-11-18 | v1.6 | Added full Croatia Airlines–style home page search UI (custom dropdowns, country → airport → destination logic), Implemented dynamic destination filtering based on origin (ajax/origin_countries, ajax/airports, ajax/dest_countries, ajax/dest_airports), Added Round Trip & One-Way toggle with auto-hiding return date, Integrated dynamic date availability loading via `/ajax/available_dates/` for both legs, Replaced old select boxes with interactive custom dropdown panels, Fixed missing destination airport issue (Zagreb not showing for Neum), Added login-required search validation (origin+destination blocking), Added swap button & UI refinements, Cleaned and reorganized `home_search.js` logic (origin flow, destination flow, date loading, tripType), Updated `home.html` with new search bar, added trip type selector, improved structure and clarity, Fixed dropdown panel layouts & style alignment |
 | 2025-11-20 | v1.7 | Implemented Check-In functionality — users can check in 24h before flight, otherwise displays error: “Check-in available 24h before departure.”. Added real timezone handling for flights (example: Helsinki flight stored as `10:00–13:00` in database, displays `14:00` (+1h) timezone). Introduced `race condition` handling for seat purchase — if two users try to buy the same seat, the slower one receives an error. Added passenger verification for check-in — requires first name, last name, and OIB as confirmation. Updated backend and database to support timezone-aware flight times and check-in validation. Minor UI refinements for check-in form (name, surname, OIB fields, error display). |
+| 2026-01-02 | v1.8 | **Major Refactoring & Service Layer Implementation**: Extracted business logic from views into dedicated services (`BookingService`, `SeatmapService`, `TicketService`, `PdfService`, `EmailService`) for cleaner architecture. **Frontend Overhaul**: Switched Booking Step 5 (Payment) to use **JSON/AJAX** communication instead of form submission to fix PayPal redirect issues.  **Security**: Implemented `.env` file support using `python-dotenv` to secure sensitive credentials (`SECRET_KEY`, Database, Email, PayPal). Added Flatpickr and Select2 via CDN to `base.html` for better UI/UX.|
 
 
 ## 🚧 Future Improvements
