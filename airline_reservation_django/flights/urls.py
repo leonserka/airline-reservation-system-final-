@@ -1,7 +1,6 @@
 from django.urls import path
 from django.contrib.auth import views as auth_views
 from . import views
-from .views import misc_views, ticket_views  
 
 urlpatterns = [
     path('', views.home, name='home'),
@@ -19,12 +18,12 @@ urlpatterns = [
     path('check-booked-flights/', views.check_booked_flights, name='check_booked_flights'),
     path('cancel-booked-flight/<int:ticket_id>/', views.cancel_booked_flight, name='cancel_booked_flight'),
     path('about-ticket/<int:ticket_id>/', views.about_ticket, name='about_ticket'),
-    path("ticket/<int:ticket_id>/check-in/", ticket_views.check_in, name="check_in"),
-    path("ajax/airports/", misc_views.get_airports_by_country, name="ajax_airports"),
-    path("ajax/dest_countries/", misc_views.get_destination_countries, name="ajax_dest_countries"),
-    path("ajax/dest_airports/", misc_views.get_destination_airports, name="ajax_dest_airports"),
+    path("ticket/<int:ticket_id>/check-in/", views.check_in, name="check_in"),
+    path("ajax/airports/", views.get_airports_by_country, name="ajax_airports"),
+    path("ajax/dest_countries/", views.get_destination_countries, name="ajax_dest_countries"),
+    path("ajax/dest_airports/", views.get_destination_airports, name="ajax_dest_airports"),
     path("ajax/origin_countries/", views.get_origin_countries, name="ajax_origin_countries"),
-    path("ajax/available_dates/", misc_views.get_available_dates, name="ajax_available_dates"),
+    path("ajax/available_dates/", views.get_available_dates, name="ajax_available_dates"),
     path('password-reset/', auth_views.PasswordResetView.as_view(template_name='flights/password_reset.html'), name='password_reset'),
     path('password-reset/done/', auth_views.PasswordResetDoneView.as_view(template_name='flights/password_reset_done.html'), name='password_reset_done'),
     path('reset/<uidb64>/<token>/', auth_views.PasswordResetConfirmView.as_view(template_name='flights/password_reset_confirm.html'), name='password_reset_confirm'),

@@ -107,3 +107,18 @@ flyway/conf/
 # --- Migrations (ignored if using Flyway) ---
 airline_reservation_django/flights/migrations/*.py
 !airline_reservation_django/flights/migrations/__init__.py
+
+
+# Django collectstatic output
+staticfiles/
+
+# Env / venv
+.env
+.venv/
+venv/
+__pycache__/
+*.pyc
+
+# IDE
+.vscode/
+.idea/
